@@ -1,16 +1,15 @@
 import java.util.Arrays;
 
-/**
- * Created by Tomek on 19.04.2018.
- */
 public class RulesGenerator1D {
     private int[] tab;
     private int[] rules;
     private int ruleNumber;
+    public final int type;
     public static int NORMAL = 1;
-    public static int PERIODIC = 1;
+    public static int PERIODIC = 2;
 
-    public RulesGenerator1D( int size, int ruleNumber ) {
+    public RulesGenerator1D( int size, int ruleNumber, int type ) {
+        this.type = type;
         this.ruleNumber = ruleNumber;
         tab = new int[size];
         Arrays.fill( tab, 0 );
@@ -29,9 +28,14 @@ public class RulesGenerator1D {
         int result = 0;
         int before, that = t[index], after;
 
-        if( index != 0 && index != ( t.length - 1 ) ) {
-            before = t[index - 1];
-            after = t[index + 1];
+        if( ( index != 0 && index != ( t.length - 1 ) ) || type == RulesGenerator1D.PERIODIC ) {
+
+            if( type == RulesGenerator1D.PERIODIC && index == 0 ) before = t[t.length - 1];
+            else before = t[index - 1];
+
+            if( type == RulesGenerator1D.PERIODIC && index == t.length - 1 ) after = t[0];
+            else after = t[index + 1];
+
             if( before == 1 && that == 1 && after == 1 ) result = rules[0];
             else if( before == 1 && that == 1 && after == 0 ) result = rules[1];
             else if( before == 1 && that == 0 && after == 1 ) result = rules[2];
@@ -41,19 +45,21 @@ public class RulesGenerator1D {
             else if( before == 0 && that == 0 && after == 1 ) result = rules[6];
             else if( before == 0 && that == 0 && after == 0 ) result = rules[7];
         }
-        else if( index == 0 ) {
-            after = t[index + 1];
-            if( that == 1 && after == 1 ) result = rules[4];
-            else if( that == 1 && after == 0 ) result = rules[5];
-            else if( that == 0 && after == 1 ) result = rules[6];
-            else if( that == 0 && after == 0 ) result = rules[7];
-        }
-        else if( index == t.length - 1 ) {
-            before = t[index - 1];
-            if( before == 1 && that == 1 ) result = rules[1];
-            else if( before == 1 && that == 0 ) result = rules[3];
-            else if( before == 0 && that == 1 ) result = rules[5];
-            else if( before == 0 && that == 0 ) result = rules[7];
+        else if( type == RulesGenerator1D.NORMAL ) {
+            if( index == 0 ) {
+                after = t[index + 1];
+                if( that == 1 && after == 1 ) result = rules[4];
+                else if( that == 1 && after == 0 ) result = rules[5];
+                else if( that == 0 && after == 1 ) result = rules[6];
+                else if( that == 0 && after == 0 ) result = rules[7];
+            }
+            else if( index == t.length - 1 ) {
+                before = t[index - 1];
+                if( before == 1 && that == 1 ) result = rules[1];
+                else if( before == 1 && that == 0 ) result = rules[3];
+                else if( before == 0 && that == 1 ) result = rules[5];
+                else if( before == 0 && that == 0 ) result = rules[7];
+            }
         }
 
         return result;
@@ -71,6 +77,5 @@ public class RulesGenerator1D {
 
         return getTab();
     }
-
-
+    
 }
