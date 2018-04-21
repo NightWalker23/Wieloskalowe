@@ -9,12 +9,12 @@ public class Main {
 
     public static void draw( RulesGenerator1D rule, int iterations ) {
         show( rule.getTab() );
-        for( int i = 0; i < iterations - 1; i++ )
+        for( int i = 0; i < iterations; i++ )
             show( rule.getResult( rule.getTab() ) );
     }
 
     public static void main( String[] args ) {
-        RulesGenerator1D rule = new RulesGenerator1D( 31, 20, RulesGenerator1D.NORMAL);
+        RulesGenerator1D rule = new RulesGenerator1D( 31, 182, RulesGenerator1D.NORMAL);
         draw(rule, 20);
     }
 }

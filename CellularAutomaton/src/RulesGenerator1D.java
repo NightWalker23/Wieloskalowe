@@ -77,5 +77,5 @@ public class RulesGenerator1D {
 
         return getTab();
     }
-    
+
 }
