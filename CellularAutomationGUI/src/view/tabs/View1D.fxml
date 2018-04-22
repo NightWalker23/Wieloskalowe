@@ -11,12 +11,10 @@
 <AnchorPane prefHeight="610.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.tabs.Controller1D">
    <children>
       <Canvas id="canvas1D" fx:id="canvas1D" height="600.0" layoutX="14.0" layoutY="14.0" width="600.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
-      <TextField fx:id="gridField" layoutX="369.0" layoutY="14.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" promptText="Szerokość siatki" AnchorPane.rightAnchor="53.0" AnchorPane.topAnchor="10.0" />
-      <Button fx:id="gridButton" layoutX="534.0" layoutY="14.0" mnemonicParsing="false" onAction="#setGridWidth" text="OK" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
-      <Button fx:id="ruleButton" layoutX="553.0" layoutY="55.0" mnemonicParsing="false" onAction="#setRule" text="OK" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="45.0" />
-      <TextField fx:id="ruleField" layoutX="388.0" layoutY="55.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" promptText="Numer reguły" AnchorPane.rightAnchor="53.0" AnchorPane.topAnchor="45.0" />
-      <Button fx:id="drawButton" layoutX="647.0" layoutY="130.0" mnemonicParsing="false" onAction="#draw" prefHeight="25.0" prefWidth="143.0" text="Rysuj" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="130.0" />
-      <RadioButton fx:id="radioNormal" layoutX="647.0" layoutY="79.0" mnemonicParsing="false" text="Normal" AnchorPane.rightAnchor="92.0" AnchorPane.topAnchor="80.0" />
-      <RadioButton fx:id="radioPeriodic" layoutX="647.0" layoutY="104.0" mnemonicParsing="false" text="Periodic" AnchorPane.rightAnchor="89.0" AnchorPane.topAnchor="104.0" />
+      <TextField fx:id="gridField" layoutX="686.0" layoutY="14.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="170.0" promptText="Szerokość siatki" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+      <TextField fx:id="ruleField" layoutX="686.0" layoutY="45.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="170.0" promptText="Numer reguły" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="45.0" />
+      <Button fx:id="drawButton" layoutX="620.0" layoutY="129.0" mnemonicParsing="false" onAction="#draw" prefHeight="25.0" prefWidth="170.0" text="Rysuj" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="135.0" />
+      <RadioButton fx:id="radioNormal" layoutX="620.0" layoutY="77.0" mnemonicParsing="false" text="Normal" AnchorPane.rightAnchor="120.0" AnchorPane.topAnchor="80.0" />
+      <RadioButton fx:id="radioPeriodic" layoutX="619.0" layoutY="103.0" mnemonicParsing="false" text="Periodic" AnchorPane.rightAnchor="117.0" AnchorPane.topAnchor="105.0" />
    </children>
 </AnchorPane>

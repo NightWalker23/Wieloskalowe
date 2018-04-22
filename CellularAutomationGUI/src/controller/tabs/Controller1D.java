@@ -1,7 +1,5 @@
 package controller.tabs;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -13,7 +11,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.paint.Color;
 import model.Model1D;
-
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -21,7 +18,7 @@ public class Controller1D implements Initializable {
     @FXML
     TextField gridField, ruleField;
     @FXML
-    Button gridButton, ruleButton, drawButton;
+    Button drawButton;
     @FXML
     Canvas canvas1D;
     @FXML
@@ -57,7 +54,7 @@ public class Controller1D implements Initializable {
             try {
                 if (!newValue.matches("\\d*"))
                     gridField.setText(oldValue);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         });
 
@@ -65,23 +62,31 @@ public class Controller1D implements Initializable {
             try {
                 if (!newValue.matches("\\d*"))
                     ruleField.setText(oldValue);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         });
     }
 
-    public void setGridWidth(ActionEvent actionEvent) {
-        cellNumber = Integer.parseInt(gridField.getText());
-        if (cellNumber > 600) //bo 600 to max siatki
-            cellNumber = 600;
+    private void setGridWidth() {
+        try{
+            cellNumber = Integer.parseInt(gridField.getText());
+            if (cellNumber > 600) //bo 600 to max siatki
+                cellNumber = 600;
+        }
+        catch (Exception ignored){}
     }
 
-    public void setRule(ActionEvent actionEvent) {
-        ruleNumber = Integer.parseInt(ruleField.getText());
+    private void setRule() {
+        try{
+            ruleNumber = Integer.parseInt(ruleField.getText());
+        }
+        catch (Exception ignored) {}
     }
 
 
     public void draw(ActionEvent actionEvent) {
+        setGridWidth();
+        setRule();
         cleanCanvas();
         int rozmiar = (int) (canvas1D.getWidth() / cellNumber);
 
@@ -91,14 +96,12 @@ public class Controller1D implements Initializable {
         rule = new Model1D(cellNumber, ruleNumber, type);
         int[] tab = rule.getTab();
 
+        gc.setFill(square);
         for (int i = 0; i < cellNumber; i++) {
-            for (int j = 0; j < cellNumber; j++) {
+            for (int j = 0; j < cellNumber; j++)
+                if (tab[j] == Model1D.Option.ALIVE)
+                    gc.fillRect(j * rozmiar, i * rozmiar, rozmiar, rozmiar);
 
-                if (tab[j] == Model1D.Option.ALIVE) gc.setFill(square);
-                else if (tab[j] == Model1D.Option.DEAD) gc.setFill(background);
-
-                gc.fillRect(j * rozmiar, i * rozmiar, rozmiar, rozmiar);
-            }
             tab = rule.getResult(rule.getTab());
         }
     }
