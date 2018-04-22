@@ -5,8 +5,15 @@ public class RulesGenerator1D {
     private int[] rules;
     private int ruleNumber;
     public final int type;
-    public static int NORMAL = 1;
-    public static int PERIODIC = 2;
+    static class Type{
+        public static int NORMAL = 1;
+        public static int PERIODIC = 2;
+    }
+
+    static class Option{
+        public static int DEAD = 0;
+        public static int ALIVE = 1;
+    }
 
     public RulesGenerator1D( int size, int ruleNumber, int type ) {
         this.type = type;
@@ -26,39 +33,39 @@ public class RulesGenerator1D {
 
     private int checkNeighbours( int[] t, int index ) {
         int result = 0;
-        int before, that = t[index], after;
+        int prev, that = t[index], next;
 
-        if( ( index != 0 && index != ( t.length - 1 ) ) || type == RulesGenerator1D.PERIODIC ) {
+        if( ( index != 0 && index != ( t.length - 1 ) ) || type == Type.PERIODIC ) {
 
-            if( type == RulesGenerator1D.PERIODIC && index == 0 ) before = t[t.length - 1];
-            else before = t[index - 1];
+            if( type == Type.PERIODIC && index == 0 ) prev = t[t.length - 1];
+            else prev = t[index - 1];
 
-            if( type == RulesGenerator1D.PERIODIC && index == t.length - 1 ) after = t[0];
-            else after = t[index + 1];
+            if( type == Type.PERIODIC && index == t.length - 1 ) next = t[0];
+            else next = t[index + 1];
 
-            if( before == 1 && that == 1 && after == 1 ) result = rules[0];
-            else if( before == 1 && that == 1 && after == 0 ) result = rules[1];
-            else if( before == 1 && that == 0 && after == 1 ) result = rules[2];
-            else if( before == 1 && that == 0 && after == 0 ) result = rules[3];
-            else if( before == 0 && that == 1 && after == 1 ) result = rules[4];
-            else if( before == 0 && that == 1 && after == 0 ) result = rules[5];
-            else if( before == 0 && that == 0 && after == 1 ) result = rules[6];
-            else if( before == 0 && that == 0 && after == 0 ) result = rules[7];
+            if( prev == Option.ALIVE && that == Option.ALIVE && next == Option.ALIVE ) result = rules[0];
+            else if( prev == Option.ALIVE && that == Option.ALIVE && next == Option.DEAD ) result = rules[1];
+            else if( prev == Option.ALIVE && that == Option.DEAD && next == Option.ALIVE ) result = rules[2];
+            else if( prev == Option.ALIVE && that == Option.DEAD && next == Option.DEAD ) result = rules[3];
+            else if( prev == Option.DEAD && that == Option.ALIVE && next == Option.ALIVE ) result = rules[4];
+            else if( prev == Option.DEAD && that == Option.ALIVE && next == Option.DEAD ) result = rules[5];
+            else if( prev == Option.DEAD && that == Option.DEAD && next == Option.ALIVE ) result = rules[6];
+            else if( prev == Option.DEAD && that == Option.DEAD && next == Option.DEAD ) result = rules[7];
         }
-        else if( type == RulesGenerator1D.NORMAL ) {
+        else if( type == Type.NORMAL ) {
             if( index == 0 ) {
-                after = t[index + 1];
-                if( that == 1 && after == 1 ) result = rules[4];
-                else if( that == 1 && after == 0 ) result = rules[5];
-                else if( that == 0 && after == 1 ) result = rules[6];
-                else if( that == 0 && after == 0 ) result = rules[7];
+                next = t[index + 1];
+                if( that == Option.ALIVE && next == Option.ALIVE ) result = rules[4];
+                else if( that == Option.ALIVE && next == Option.DEAD ) result = rules[5];
+                else if( that == Option.DEAD && next == Option.ALIVE ) result = rules[6];
+                else if( that == Option.DEAD && next == Option.DEAD ) result = rules[7];
             }
             else if( index == t.length - 1 ) {
-                before = t[index - 1];
-                if( before == 1 && that == 1 ) result = rules[1];
-                else if( before == 1 && that == 0 ) result = rules[3];
-                else if( before == 0 && that == 1 ) result = rules[5];
-                else if( before == 0 && that == 0 ) result = rules[7];
+                prev = t[index - 1];
+                if( prev == Option.ALIVE && that == Option.ALIVE ) result = rules[1];
+                else if( prev == Option.ALIVE && that == Option.DEAD ) result = rules[3];
+                else if( prev == Option.DEAD && that == Option.ALIVE ) result = rules[5];
+                else if( prev == Option.DEAD && that == Option.DEAD ) result = rules[7];
             }
         }
 

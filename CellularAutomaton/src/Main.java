@@ -14,7 +14,7 @@ public class Main {
     }
 
     public static void main( String[] args ) {
-        RulesGenerator1D rule = new RulesGenerator1D( 31, 182, RulesGenerator1D.NORMAL);
+        RulesGenerator1D rule = new RulesGenerator1D( 31, 90, RulesGenerator1D.Type.NORMAL);
         draw(rule, 20);
     }
 }
