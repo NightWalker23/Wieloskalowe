@@ -6,17 +6,19 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import model.Model1D;
+
 import java.net.URL;
-import java.util.Random;
 import java.util.ResourceBundle;
 
 public class Controller1D implements Initializable {
+    @FXML
+    Slider sliderCellSize, sliderRuleNumber,
+            sliderBackgroundR, sliderBackgroundG, sliderBackgroundB,
+            sliderCellColorR, sliderCellColorG, sliderCellColorB;
     @FXML
     TextField gridField, ruleField;
     @FXML
@@ -30,19 +32,56 @@ public class Controller1D implements Initializable {
     private GraphicsContext gc;
     private Model1D rule;
     private int cellSize, ruleNumber, type;
-    private Color background = Color.WHITE, square = Color.BLACK;
+    private Color background, square;
+    private double bR, bG, bB, cR, cG, cB;
 
     //czyszczenie canvasa
     private void cleanCanvas() {
+        background = Color.color(bR, bG, bB);
         gc.setFill(background);
         gc.fillRect(0, 0, canvas1D.getWidth(), canvas1D.getHeight());
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        cellSize = 10;
-        ruleNumber = 90;
+        cellSize = 1;
+        ruleNumber = 0;
+        bR = 1;
+        bG = 1;
+        bB = 1;
+        cR = 0;
+        cG = 0;
+        cB = 0;
         type = Model1D.Type.NORMAL;
+
+        sliderCellSize.setMin(1);
+        sliderCellSize.setMax(300);
+
+        sliderRuleNumber.setMin(0);
+        sliderRuleNumber.setMax(255);
+
+        sliderBackgroundR.setMin(0);
+        sliderBackgroundR.setMax(1);
+        sliderBackgroundR.setMajorTickUnit(0.004);
+        sliderBackgroundR.setValue(1);
+        sliderBackgroundG.setMin(0);
+        sliderBackgroundG.setMax(1);
+        sliderBackgroundG.setMajorTickUnit(0.004);
+        sliderBackgroundG.setValue(1);
+        sliderBackgroundB.setMin(0);
+        sliderBackgroundB.setMax(1);
+        sliderBackgroundB.setMajorTickUnit(0.004);
+        sliderBackgroundB.setValue(1);
+
+        sliderCellColorR.setMin(0);
+        sliderCellColorR.setMax(1);
+        sliderCellColorR.setMajorTickUnit(0.004);
+        sliderCellColorG.setMin(0);
+        sliderCellColorG.setMax(1);
+        sliderCellColorG.setMajorTickUnit(0.004);
+        sliderCellColorB.setMin(0);
+        sliderCellColorB.setMax(1);
+        sliderCellColorB.setMajorTickUnit(0.004);
 
         radioNormal.setToggleGroup(group);
         radioNormal.setSelected(true);
@@ -70,23 +109,23 @@ public class Controller1D implements Initializable {
     }
 
     private void setGridWidth() {
-        try{
+        try {
             cellSize = Integer.parseInt(gridField.getText());
             if (cellSize > 300) //bo 600 to max siatki
                 cellSize = 300;
             if (cellSize < 1)
                 cellSize = 1;
+        } catch (Exception ignored) {
         }
-        catch (Exception ignored){}
     }
 
     private void setRule() {
-        try{
+        try {
             int tmp = Integer.parseInt(ruleField.getText());
             if (tmp >= 0 && tmp <= 255)
                 ruleNumber = tmp;
+        } catch (Exception ignored) {
         }
-        catch (Exception ignored) {}
     }
 
 
@@ -95,12 +134,7 @@ public class Controller1D implements Initializable {
         setRule();
         cleanCanvas();
 
-        Random rand = new Random();
-        double R, G, B;
-        R = rand.nextDouble();
-        G = rand.nextDouble();
-        B = rand.nextDouble();
-        square = Color.color(R, G,B);
+        square = Color.color(cR, cG, cB);
         gc.setFill(square);
 
         int amount = (int) (canvas1D.getWidth() / cellSize);
@@ -119,7 +153,40 @@ public class Controller1D implements Initializable {
                 tab[0] = rule.getResult(rule.getTab());
             }
         });
-
     }
 
+    public void sliderSetCell(MouseEvent mouseEvent) {
+        cellSize = (int) sliderCellSize.getValue();
+        if (((int) canvas1D.getWidth()) % cellSize == 0)
+            gridField.setText(Integer.toString(cellSize));
+    }
+
+    public void sliderSetRule(MouseEvent mouseEvent) {
+        ruleNumber = (int) sliderRuleNumber.getValue();
+        ruleField.setText(Integer.toString(ruleNumber));
+    }
+
+    public void setBackgroundR(MouseEvent mouseEvent) {
+        bR = sliderBackgroundR.getValue();
+    }
+
+    public void setBackgroundG(MouseEvent mouseEvent) {
+        bG = sliderBackgroundG.getValue();
+    }
+
+    public void setBackgroundB(MouseEvent mouseEvent) {
+        bB = sliderBackgroundB.getValue();
+    }
+
+    public void setCellR(MouseEvent mouseEvent) {
+        cR = sliderCellColorR.getValue();
+    }
+
+    public void setCellG(MouseEvent mouseEvent) {
+        cG = sliderCellColorG.getValue();
+    }
+
+    public void setCellB(MouseEvent mouseEvent) {
+        cB = sliderCellColorB.getValue();
+    }
 }

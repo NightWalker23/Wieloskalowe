@@ -8,13 +8,29 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="610.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.tabs.Controller1D">
+<AnchorPane prefHeight="610.0" prefWidth="950.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.tabs.Controller1D">
    <children>
       <Canvas id="canvas1D" fx:id="canvas1D" height="600.0" layoutX="14.0" layoutY="14.0" width="600.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
-      <TextField fx:id="gridField" layoutX="686.0" layoutY="14.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="170.0" promptText="Rozmiar komórki (1-300)" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
-      <TextField fx:id="ruleField" layoutX="686.0" layoutY="45.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="170.0" promptText="Numer reguły (0-255)" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="45.0" />
-      <Button fx:id="drawButton" layoutX="620.0" layoutY="129.0" mnemonicParsing="false" onAction="#draw" prefHeight="25.0" prefWidth="170.0" text="Rysuj" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="135.0" />
-      <RadioButton fx:id="radioNormal" layoutX="620.0" layoutY="77.0" mnemonicParsing="false" text="Normal" AnchorPane.rightAnchor="120.0" AnchorPane.topAnchor="80.0" />
-      <RadioButton fx:id="radioPeriodic" layoutX="619.0" layoutY="103.0" mnemonicParsing="false" text="Periodic" AnchorPane.rightAnchor="117.0" AnchorPane.topAnchor="105.0" />
+      <TextField fx:id="gridField" layoutX="616.0" layoutY="94.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="300.0" promptText="Cell size" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="34.0" />
+      <TextField fx:id="ruleField" layoutX="616.0" layoutY="129.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="300.0" promptText="Rule number" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="100.0" />
+      <Button fx:id="drawButton" layoutX="641.0" layoutY="414.0" mnemonicParsing="false" onAction="#draw" prefHeight="25.0" prefWidth="300.0" text="Rysuj" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="414.0" />
+      <RadioButton fx:id="radioNormal" layoutX="640.0" layoutY="139.0" mnemonicParsing="false" text="Normal" AnchorPane.rightAnchor="249.0" AnchorPane.topAnchor="139.0" />
+      <RadioButton fx:id="radioPeriodic" layoutX="640.0" layoutY="165.0" mnemonicParsing="false" text="Periodic" AnchorPane.rightAnchor="246.0" AnchorPane.topAnchor="165.0" />
+      <Slider fx:id="sliderCellSize" blockIncrement="1.0" layoutX="616.0" layoutY="22.0" majorTickUnit="1.0" max="300.0" min="1.0" minorTickCount="1" onMouseDragged="#sliderSetCell" prefHeight="14.0" prefWidth="300.0" snapToTicks="true" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+      <Slider fx:id="sliderRuleNumber" layoutX="620.0" layoutY="86.0" majorTickUnit="1.0" minorTickCount="1" onMouseDragged="#sliderSetRule" prefHeight="14.0" prefWidth="300.0" snapToTicks="true" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="75.0" />
+      <Label layoutX="640.0" layoutY="197.0" text="Background color" AnchorPane.rightAnchor="215.0" />
+      <Label layoutX="640.0" layoutY="221.0" text="R" AnchorPane.rightAnchor="300.0" />
+      <Label layoutX="640.0" layoutY="246.0" text="G" AnchorPane.rightAnchor="300.0" />
+      <Label layoutX="640.0" layoutY="270.0" text="B" AnchorPane.rightAnchor="300.0" />
+      <Slider fx:id="sliderBackgroundR" layoutX="655.0" layoutY="223.0" max="255.0" minorTickCount="1" onMouseDragged="#setBackgroundR" prefHeight="14.0" prefWidth="282.0" AnchorPane.rightAnchor="10.0" />
+      <Slider fx:id="sliderBackgroundG" layoutX="658.0" layoutY="248.0" max="255.0" minorTickCount="1" onMouseDragged="#setBackgroundG" prefHeight="14.0" prefWidth="282.0" AnchorPane.rightAnchor="10.0" />
+      <Slider fx:id="sliderBackgroundB" layoutX="656.0" layoutY="272.0" max="255.0" minorTickCount="1" onMouseDragged="#setBackgroundB" prefHeight="14.0" prefWidth="282.0" AnchorPane.rightAnchor="10.0" />
+      <Slider fx:id="sliderCellColorB" layoutX="656.0" layoutY="385.0" max="255.0" minorTickCount="1" onMouseDragged="#setCellB" prefHeight="14.0" prefWidth="282.0" AnchorPane.rightAnchor="10.0" />
+      <Slider fx:id="sliderCellColorG" layoutX="658.0" layoutY="361.0" max="255.0" minorTickCount="1" onMouseDragged="#setCellG" prefHeight="14.0" prefWidth="282.0" AnchorPane.rightAnchor="10.0" />
+      <Slider fx:id="sliderCellColorR" layoutX="655.0" layoutY="336.0" max="255.0" minorTickCount="1" onMouseDragged="#setCellR" prefHeight="14.0" prefWidth="282.0" AnchorPane.rightAnchor="10.0" />
+      <Label layoutX="640.0" layoutY="383.0" text="B" AnchorPane.rightAnchor="300.0" />
+      <Label layoutX="640.0" layoutY="359.0" text="G" AnchorPane.rightAnchor="300.0" />
+      <Label layoutX="640.0" layoutY="334.0" text="R" AnchorPane.rightAnchor="300.0" />
+      <Label layoutX="640.0" layoutY="310.0" text="Cells color" AnchorPane.rightAnchor="255.0" />
    </children>
 </AnchorPane>
