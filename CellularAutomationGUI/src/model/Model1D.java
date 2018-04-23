@@ -6,7 +6,7 @@ public class Model1D {
     private int[] tab;
     private int[] rules;
     private int ruleNumber;
-    public final int type;
+    private final int type;
 
     public static class Type {
         public static int NORMAL = 1;

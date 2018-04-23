@@ -1,5 +1,6 @@
 package controller.tabs;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -12,6 +13,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.paint.Color;
 import model.Model1D;
 import java.net.URL;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 public class Controller1D implements Initializable {
@@ -27,7 +29,7 @@ public class Controller1D implements Initializable {
     private ToggleGroup group = new ToggleGroup(); //grupuje radio buttony
     private GraphicsContext gc;
     private Model1D rule;
-    private int cellNumber, ruleNumber, type;
+    private int cellSize, ruleNumber, type;
     private Color background = Color.WHITE, square = Color.BLACK;
 
     //czyszczenie canvasa
@@ -38,7 +40,7 @@ public class Controller1D implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        cellNumber = 10;
+        cellSize = 10;
         ruleNumber = 90;
         type = Model1D.Type.NORMAL;
 
@@ -69,16 +71,20 @@ public class Controller1D implements Initializable {
 
     private void setGridWidth() {
         try{
-            cellNumber = Integer.parseInt(gridField.getText());
-            if (cellNumber > 600) //bo 600 to max siatki
-                cellNumber = 600;
+            cellSize = Integer.parseInt(gridField.getText());
+            if (cellSize > 300) //bo 600 to max siatki
+                cellSize = 300;
+            if (cellSize < 1)
+                cellSize = 1;
         }
         catch (Exception ignored){}
     }
 
     private void setRule() {
         try{
-            ruleNumber = Integer.parseInt(ruleField.getText());
+            int tmp = Integer.parseInt(ruleField.getText());
+            if (tmp >= 0 && tmp <= 255)
+                ruleNumber = tmp;
         }
         catch (Exception ignored) {}
     }
@@ -88,22 +94,32 @@ public class Controller1D implements Initializable {
         setGridWidth();
         setRule();
         cleanCanvas();
-        int rozmiar = (int) (canvas1D.getWidth() / cellNumber);
+
+        Random rand = new Random();
+        double R, G, B;
+        R = rand.nextDouble();
+        G = rand.nextDouble();
+        B = rand.nextDouble();
+        square = Color.color(R, G,B);
+        gc.setFill(square);
+
+        int amount = (int) (canvas1D.getWidth() / cellSize);
 
         if (group.getSelectedToggle() == radioNormal) type = Model1D.Type.NORMAL;
         else if (group.getSelectedToggle() == radioPeriodic) type = Model1D.Type.PERIODIC;
 
-        rule = new Model1D(cellNumber, ruleNumber, type);
-        int[] tab = rule.getTab();
+        rule = new Model1D(amount, ruleNumber, type);
 
-        gc.setFill(square);
-        for (int i = 0; i < cellNumber; i++) {
-            for (int j = 0; j < cellNumber; j++)
-                if (tab[j] == Model1D.Option.ALIVE)
-                    gc.fillRect(j * rozmiar, i * rozmiar, rozmiar, rozmiar);
+        final int[][] tab = {rule.getTab()};
+        Platform.runLater(() -> {
+            for (int i = 0; i < amount; i++) {
+                for (int j = 0; j < amount; j++)
+                    if (tab[0][j] == Model1D.Option.ALIVE)
+                        gc.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
+                tab[0] = rule.getResult(rule.getTab());
+            }
+        });
 
-            tab = rule.getResult(rule.getTab());
-        }
     }
 
 }
