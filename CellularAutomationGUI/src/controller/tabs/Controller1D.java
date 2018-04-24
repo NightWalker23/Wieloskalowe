@@ -16,9 +16,9 @@ import java.util.ResourceBundle;
 
 public class Controller1D implements Initializable {
     @FXML
-    Slider sliderCellSize, sliderRuleNumber,
-            sliderBackgroundR, sliderBackgroundG, sliderBackgroundB,
-            sliderCellColorR, sliderCellColorG, sliderCellColorB;
+    ColorPicker backgroundColorPicker, sqareColorPicker;
+    @FXML
+    Slider sliderCellSize, sliderRuleNumber;
     @FXML
     TextField gridField, ruleField;
     @FXML
@@ -31,61 +31,33 @@ public class Controller1D implements Initializable {
     private ToggleGroup group = new ToggleGroup(); //grupuje radio buttony
     private GraphicsContext gc;
     private Model1D rule;
-    private int cellSize, ruleNumber, type;
+    private int cellsInGrid, ruleNumber, type;
     private Color background, square;
-    private double bR, bG, bB, cR, cG, cB;
 
     //czyszczenie canvasa
     private void cleanCanvas() {
-        background = Color.color(bR, bG, bB);
+        background = backgroundColorPicker.getValue();
         gc.setFill(background);
         gc.fillRect(0, 0, canvas1D.getWidth(), canvas1D.getHeight());
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        cellSize = 1;
+        cellsInGrid = 2;
         ruleNumber = 0;
-        bR = 1;
-        bG = 1;
-        bB = 1;
-        cR = 0;
-        cG = 0;
-        cB = 0;
         type = Model1D.Type.NORMAL;
 
-        sliderCellSize.setMin(1);
-        sliderCellSize.setMax(300);
+        sliderCellSize.setMin(2);
+        sliderCellSize.setMax(600);
 
         sliderRuleNumber.setMin(0);
         sliderRuleNumber.setMax(255);
 
-        sliderBackgroundR.setMin(0);
-        sliderBackgroundR.setMax(1);
-        sliderBackgroundR.setMajorTickUnit(0.004);
-        sliderBackgroundR.setValue(1);
-        sliderBackgroundG.setMin(0);
-        sliderBackgroundG.setMax(1);
-        sliderBackgroundG.setMajorTickUnit(0.004);
-        sliderBackgroundG.setValue(1);
-        sliderBackgroundB.setMin(0);
-        sliderBackgroundB.setMax(1);
-        sliderBackgroundB.setMajorTickUnit(0.004);
-        sliderBackgroundB.setValue(1);
-
-        sliderCellColorR.setMin(0);
-        sliderCellColorR.setMax(1);
-        sliderCellColorR.setMajorTickUnit(0.004);
-        sliderCellColorG.setMin(0);
-        sliderCellColorG.setMax(1);
-        sliderCellColorG.setMajorTickUnit(0.004);
-        sliderCellColorB.setMin(0);
-        sliderCellColorB.setMax(1);
-        sliderCellColorB.setMajorTickUnit(0.004);
-
         radioNormal.setToggleGroup(group);
         radioNormal.setSelected(true);
         radioPeriodic.setToggleGroup(group);
+
+        sqareColorPicker.setValue(Color.BLACK);
 
         gc = canvas1D.getGraphicsContext2D();
         cleanCanvas();
@@ -110,11 +82,11 @@ public class Controller1D implements Initializable {
 
     private void setGridWidth() {
         try {
-            cellSize = Integer.parseInt(gridField.getText());
-            if (cellSize > 300) //bo 600 to max siatki
-                cellSize = 300;
-            if (cellSize < 1)
-                cellSize = 1;
+            cellsInGrid = Integer.parseInt(gridField.getText());
+            if (cellsInGrid > 600) //bo 600 to max siatki
+                cellsInGrid = 600;
+            if (cellsInGrid < 2)
+                cellsInGrid = 2;
         } catch (Exception ignored) {
         }
     }
@@ -128,37 +100,38 @@ public class Controller1D implements Initializable {
         }
     }
 
-
     public void draw(ActionEvent actionEvent) {
         setGridWidth();
         setRule();
+        sliderCellSize.setValue(cellsInGrid);
+        sliderRuleNumber.setValue(ruleNumber);
         cleanCanvas();
 
-        square = Color.color(cR, cG, cB);
+        square = sqareColorPicker.getValue();
         gc.setFill(square);
 
-        int amount = (int) (canvas1D.getWidth() / cellSize);
+        int size = (int) (canvas1D.getWidth() / cellsInGrid);
 
         if (group.getSelectedToggle() == radioNormal) type = Model1D.Type.NORMAL;
         else if (group.getSelectedToggle() == radioPeriodic) type = Model1D.Type.PERIODIC;
 
-        rule = new Model1D(amount, ruleNumber, type);
+        rule = new Model1D(cellsInGrid, ruleNumber, type);
 
         final int[][] tab = {rule.getTab()};
         Platform.runLater(() -> {
-            for (int i = 0; i < amount; i++) {
-                for (int j = 0; j < amount; j++)
+            for (int i = 0; i < cellsInGrid; i++) {
+                for (int j = 0; j < cellsInGrid; j++)
                     if (tab[0][j] == Model1D.Option.ALIVE)
-                        gc.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
+                        gc.fillRect(j * size, i * size, size, size);
                 tab[0] = rule.getResult(rule.getTab());
             }
         });
     }
 
     public void sliderSetCell(MouseEvent mouseEvent) {
-        cellSize = (int) sliderCellSize.getValue();
-        if (((int) canvas1D.getWidth()) % cellSize == 0)
-            gridField.setText(Integer.toString(cellSize));
+        cellsInGrid = (int) sliderCellSize.getValue();
+        if (((int) canvas1D.getWidth()) % cellsInGrid == 0)
+            gridField.setText(Integer.toString(cellsInGrid));
     }
 
     public void sliderSetRule(MouseEvent mouseEvent) {
@@ -166,27 +139,4 @@ public class Controller1D implements Initializable {
         ruleField.setText(Integer.toString(ruleNumber));
     }
 
-    public void setBackgroundR(MouseEvent mouseEvent) {
-        bR = sliderBackgroundR.getValue();
-    }
-
-    public void setBackgroundG(MouseEvent mouseEvent) {
-        bG = sliderBackgroundG.getValue();
-    }
-
-    public void setBackgroundB(MouseEvent mouseEvent) {
-        bB = sliderBackgroundB.getValue();
-    }
-
-    public void setCellR(MouseEvent mouseEvent) {
-        cR = sliderCellColorR.getValue();
-    }
-
-    public void setCellG(MouseEvent mouseEvent) {
-        cG = sliderCellColorG.getValue();
-    }
-
-    public void setCellB(MouseEvent mouseEvent) {
-        cB = sliderCellColorB.getValue();
-    }
 }
