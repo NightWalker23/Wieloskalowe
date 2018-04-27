@@ -13,7 +13,7 @@
       <Canvas id="canvas1D" fx:id="canvas1D" height="600.0" layoutX="14.0" layoutY="14.0" width="600.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
       <TextField fx:id="gridField" layoutX="686.0" layoutY="14.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" promptText="Cells in grid" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
       <TextField fx:id="ruleField" layoutX="686.0" layoutY="49.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" promptText="Rule number" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="45.0" />
-      <Button fx:id="drawButton" layoutX="686.0" layoutY="287.0" mnemonicParsing="false" onAction="#draw" prefHeight="25.0" prefWidth="100.0" text="Rysuj" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="287.0" />
+      <Button fx:id="drawButton" layoutX="686.0" layoutY="287.0" mnemonicParsing="false" onAction="#draw" prefHeight="25.0" prefWidth="100.0" text="Draw" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="287.0" />
       <RadioButton fx:id="radioNormal" layoutX="690.0" layoutY="82.0" mnemonicParsing="false" text="Normal" AnchorPane.rightAnchor="49.0" AnchorPane.topAnchor="82.0" />
       <RadioButton fx:id="radioPeriodic" layoutX="690.0" layoutY="107.0" mnemonicParsing="false" text="Periodic" AnchorPane.rightAnchor="46.0" AnchorPane.topAnchor="107.0" />
       <Label layoutX="693.0" layoutY="136.0" text="Background color" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="140.0" />

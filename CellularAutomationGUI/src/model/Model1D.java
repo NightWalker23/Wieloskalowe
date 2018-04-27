@@ -39,7 +39,6 @@ public class Model1D {
         int prev, that = t[index], next;
 
         if ((index != 0 && index != (t.length - 1)) || type == Type.PERIODIC) {
-
             if (type == Type.PERIODIC && index == 0) prev = t[t.length - 1];
             else prev = t[index - 1];
 
@@ -74,16 +73,17 @@ public class Model1D {
     }
 
     public int[] getTab() {
-        int[] tmp = new int[tab.length];
-        System.arraycopy(tab, 0, tmp, 0, tab.length);
-        return tmp;
+        return tab;
     }
 
     public int[] getResult(int[] t) {
+        int[] tmp = new int[tab.length];
         for (int i = 0; i < t.length; i++)
-            tab[i] = checkNeighbours(t, i);
+            tmp[i] = checkNeighbours(t, i);
 
-        return getTab();
+        System.arraycopy(tmp, 0, tab, 0, tab.length);
+
+        return tmp;
     }
 
 }
