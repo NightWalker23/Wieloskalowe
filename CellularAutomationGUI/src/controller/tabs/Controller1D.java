@@ -117,13 +117,13 @@ public class Controller1D implements Initializable {
 
         rule = new Model1D(cellsInGrid, ruleNumber, type);
 
-        final int[][] tab = {rule.getTab()};
+        final int[][] tab = {rule.getGrid()};
         Platform.runLater(() -> {
             for (int i = 0; i < cellsInGrid; i++) {
                 for (int j = 0; j < cellsInGrid; j++)
                     if (tab[0][j] == Model1D.Option.ALIVE)
                         gc.fillRect(j * size, i * size, size, size);
-                tab[0] = rule.getResult(rule.getTab());
+                tab[0] = rule.getResult(rule.getGrid());
             }
         });
     }

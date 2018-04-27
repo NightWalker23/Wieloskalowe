@@ -9,12 +9,15 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
-import model.cells.CellGameOfLife;
-import model.Model1D;
+import model.cells.*;
 import model.ModelGameOfLife;
 import model.Painter;
+import model.cells.Cell;
 import java.net.URL;
 import java.util.ResourceBundle;
+/*
+TODO: Obłsuga myszki, zrobić z modeli klasy abstrakcyjne
+ */
 
 public class ControllerGameOfLife implements Initializable {
     @FXML
@@ -120,6 +123,19 @@ public class ControllerGameOfLife implements Initializable {
         model = new ModelGameOfLife(gridHeight, gridWidth);
     }
 
+    public int setSpeed(){
+        int speed = 0;
+        if (group.getSelectedToggle() == radio10) speed = 10;
+        else if (group.getSelectedToggle() == radio20) speed = 20;
+        else if (group.getSelectedToggle() == radio50) speed = 50;
+        else if (group.getSelectedToggle() == radio100) speed = 100;
+        else if (group.getSelectedToggle() == radio200) speed = 200;
+        else if (group.getSelectedToggle() == radio500) speed = 500;
+        else if (group.getSelectedToggle() == radio1000) speed = 1000;
+
+        return speed;
+    }
+
     public void start(ActionEvent actionEvent) {
         startButton.setDisable(true);
         pauseButton.setDisable(false);
@@ -129,15 +145,7 @@ public class ControllerGameOfLife implements Initializable {
         choiceBoxGridSize.setDisable(true);
 
         cleanCanvas();
-
-        int speed = 10;
-        if (group.getSelectedToggle() == radio10) speed = 10;
-        else if (group.getSelectedToggle() == radio20) speed = 20;
-        else if (group.getSelectedToggle() == radio50) speed = 50;
-        else if (group.getSelectedToggle() == radio100) speed = 100;
-        else if (group.getSelectedToggle() == radio200) speed = 200;
-        else if (group.getSelectedToggle() == radio500) speed = 500;
-        else if (group.getSelectedToggle() == radio1000) speed = 1000;
+        int speed = setSpeed();
 
         //jeśli wypełniliśmy losowo, to bierzemy ten losowy
         if (isNewRandom)
@@ -147,6 +155,9 @@ public class ControllerGameOfLife implements Initializable {
         //bo jeśli się nie zmienił, to będzie działać jak pause/resume
         if (isNewSize)
             model = new ModelGameOfLife(gridHeight, gridWidth);
+
+        //uruchomienie Garbage Collectora
+        System.gc();
 
         painter = new Painter(canvas2D, model, gc, speed);
         thread = new Thread(painter);
@@ -177,11 +188,9 @@ public class ControllerGameOfLife implements Initializable {
         painter.stop();
     }
 
-
     public void randomFill(ActionEvent actionEvent) {
         isNewRandom = true;
         isNewSize = false;
-
 
         int amount;
         try {
@@ -194,12 +203,12 @@ public class ControllerGameOfLife implements Initializable {
                 int height = (int) canvas2D.getHeight() / modelRandom.getGridHeight();
                 int width = (int) canvas2D.getWidth() / modelRandom.getGridWidth();
                 Platform.runLater(() -> {
-                    CellGameOfLife[][] tab = modelRandom.getGrid();
+                    Cell[][] tab = modelRandom.getGrid();
                     cleanCanvas();
                     gc.setFill(Color.BLACK);
                     for (int i = 0; i < modelRandom.getGridHeight(); i++) {
                         for (int j = 0; j < modelRandom.getGridWidth(); j++)
-                            if (tab[i][j].getState() == Model1D.Option.ALIVE)
+                            if (tab[i][j].getState() == CellGameOfLife.Type.ALIVE)
                                 gc.fillRect(j * width, i * height, height, width);
                     }
                 });

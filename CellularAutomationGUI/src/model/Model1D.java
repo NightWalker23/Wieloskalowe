@@ -72,7 +72,7 @@ public class Model1D {
         return result;
     }
 
-    public int[] getTab() {
+    public int[] getGrid() {
         return tab;
     }
 

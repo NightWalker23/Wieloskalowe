@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import model.cells.Cell;
 import model.cells.CellGameOfLife;
 
 import java.util.concurrent.TimeUnit;
@@ -31,43 +32,44 @@ public class Painter implements Runnable {
         gc.fillRect(0, 0, canvas2D.getWidth(), canvas2D.getHeight());
     }
 
-    @Override
-    public void run() {
-
+    private void paint(){
         int height = (int) canvas2D.getHeight() / model.getGridHeight();
         int width = (int) canvas2D.getWidth() / model.getGridWidth();
+        try {
+            Platform.runLater(() -> {
+                Cell[][] tab = model.getResult(model.getGrid());
+                cleanCanvas();
+                gc.setFill(Color.BLACK);
+                for (int i = 0; i < model.getGridHeight(); i++) {
+                    for (int j = 0; j < model.getGridWidth(); j++)
+                        if (tab[i][j].getState() == CellGameOfLife.Type.ALIVE)
+                            gc.fillRect(j * width, i * height, height, width);
+                }
+            });
 
+            TimeUnit.MILLISECONDS.sleep(speed);
+        } catch (InterruptedException ignored) {
+        }
+    }
+
+    @Override
+    public void run() {
         while (running) {
             synchronized (pauseLock) {
-                if (!running) {
+                if (!running)
                     break;
-                }
                 if (paused) {
                     try {
                         pauseLock.wait();
                     } catch (InterruptedException ex) {
                         break;
                     }
-                    if (!running) {
+                    if (!running)
                         break;
-                    }
                 }
             }
-            try {
-                Platform.runLater(() -> {
-                    CellGameOfLife[][] tab = model.getResult(model.getGrid());
-                    cleanCanvas();
-                    gc.setFill(Color.BLACK);
-                    for (int i = 0; i < model.getGridHeight(); i++) {
-                        for (int j = 0; j < model.getGridWidth(); j++)
-                            if (tab[i][j].getState() == Model1D.Option.ALIVE)
-                                gc.fillRect(j * width, i * height, height, width);
-                    }
-                });
 
-                TimeUnit.MILLISECONDS.sleep(speed);
-            } catch (InterruptedException e) {
-            }
+            paint();
         }
     }
 

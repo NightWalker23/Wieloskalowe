@@ -1,30 +1,30 @@
 package model;
 
-
-
 import model.cells.Cell;
 import model.cells.CellGameOfLife;
-
 import java.util.Random;
 
 public class ModelGameOfLife {
     private Cell[][] grid;
+    private Cell[][] tmp;
     private int gridHeight, gridWidth;
 
     public ModelGameOfLife(int height, int wight) {
         gridHeight = height;
         gridWidth = wight;
         grid = new CellGameOfLife[gridHeight][gridWidth];
+        tmp = new CellGameOfLife[gridHeight][gridWidth];
 
-        for (int i = 0; i < gridHeight; i++)
-            for (int j = 0; j < gridWidth; j++)
+        for (int i = 0; i < gridHeight; i++) {
+            for (int j = 0; j < gridWidth; j++) {
                 grid[i][j] = new CellGameOfLife();
-
-        //fillRandomly(100);
+                tmp[i][j] = new CellGameOfLife();
+            }
+        }
     }
 
-    private int checkNeighbours(CellGameOfLife[][] frame, int height, int width) {
-        int result;
+    private byte checkNeighbours(Cell[][] frame, int height, int width) {
+        byte result;
 
         int iG, i, iD, jL, j, jR;
         i = height;
@@ -64,15 +64,21 @@ public class ModelGameOfLife {
         return result;
     }
 
-    public CellGameOfLife[][] getGrid() {
-        return (CellGameOfLife[][]) grid;
+    public Cell[][] getGrid() {
+        return grid;
     }
 
-    public CellGameOfLife[][] getResult(CellGameOfLife[][] frame) {
-        CellGameOfLife[][] tmp = new CellGameOfLife[gridHeight][gridWidth];
+    private Cell[][] getTmp(){
+        Cell[][] tmp = new CellGameOfLife[gridHeight][gridWidth];
         for (int i = 0; i < gridHeight; i++)
             for (int j = 0; j < gridWidth; j++)
                 tmp[i][j] = new CellGameOfLife();
+
+        return tmp;
+    }
+
+    public Cell[][] getResult(Cell[][] frame) {
+        Cell[][] tmp = getTmp();
 
         for (int i = 0; i < gridHeight; i++)
             for (int j = 0; j < gridWidth; j++)

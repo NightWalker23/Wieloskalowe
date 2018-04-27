@@ -1,9 +1,13 @@
 package model.cells;
 
-public interface Cell {
-    class Type{}
-    int state = 0;
+public abstract class Cell {
 
-    int getState();
-    void setState(int state);
+    public byte state;
+
+    public byte getState(){
+        return state;
+    }
+    public void setState(byte state){
+        this.state = state;
+    }
 }
