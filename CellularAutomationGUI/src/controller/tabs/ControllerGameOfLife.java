@@ -8,6 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import model.cells.*;
 import model.ModelGameOfLife;
@@ -33,11 +34,10 @@ public class ControllerGameOfLife implements Initializable {
 
     private ToggleGroup group = new ToggleGroup();
     private GraphicsContext gc;
-    private ModelGameOfLife model, modelRandom;
+    private ModelGameOfLife model;
     private int gridHeight, gridWidth;
     private Painter painter;
     private Thread thread;
-    private boolean isNewRandom, isNewSize; //zmienne pomocnicze podczas sterowania GUI
 
     private void cleanCanvas() {
         gc.setFill(Color.WHITE);
@@ -55,7 +55,6 @@ public class ControllerGameOfLife implements Initializable {
         //listener do choice boxa
         choiceBoxGridSize.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             final int value = newValue.intValue();
-            isNewSize = true;
 
             switch (value) {
                 case 0:
@@ -91,6 +90,8 @@ public class ControllerGameOfLife implements Initializable {
                     gridWidth = 600;
                     break;
             }
+            model = new ModelGameOfLife(gridHeight, gridWidth);
+            reset(new ActionEvent());
         });
 
         pauseButton.setDisable(true);
@@ -118,8 +119,6 @@ public class ControllerGameOfLife implements Initializable {
             }
         });
 
-        isNewRandom = false;
-        isNewSize = false;
         model = new ModelGameOfLife(gridHeight, gridWidth);
     }
 
@@ -147,15 +146,6 @@ public class ControllerGameOfLife implements Initializable {
         cleanCanvas();
         int speed = setSpeed();
 
-        //jeśli wypełniliśmy losowo, to bierzemy ten losowy
-        if (isNewRandom)
-            model = modelRandom;
-
-        //jeśli od ostatniego startu zmienił się rozmiar Canvasa to zerujemy
-        //bo jeśli się nie zmienił, to będzie działać jak pause/resume
-        if (isNewSize)
-            model = new ModelGameOfLife(gridHeight, gridWidth);
-
         //uruchomienie Garbage Collectora
         System.gc();
 
@@ -163,9 +153,6 @@ public class ControllerGameOfLife implements Initializable {
         thread = new Thread(painter);
         thread.setDaemon(true);
         thread.start();
-
-        isNewRandom = false;
-        isNewSize = false;
     }
 
     public void pause(ActionEvent actionEvent) {
@@ -189,25 +176,22 @@ public class ControllerGameOfLife implements Initializable {
     }
 
     public void randomFill(ActionEvent actionEvent) {
-        isNewRandom = true;
-        isNewSize = false;
-
         int amount;
         try {
             amount = Integer.parseInt(randomCellsField.getText());
             if (amount > 0) {
-                modelRandom = new ModelGameOfLife(gridHeight, gridWidth);
-                modelRandom.clearGrid();
-                modelRandom.fillRandomly(amount);
+                model = new ModelGameOfLife(gridHeight, gridWidth);
+                model.clearGrid();
+                model.fillRandomly(amount);
 
-                int height = (int) canvas2D.getHeight() / modelRandom.getGridHeight();
-                int width = (int) canvas2D.getWidth() / modelRandom.getGridWidth();
+                int height = (int) canvas2D.getHeight() / model.getGridHeight();
+                int width = (int) canvas2D.getWidth() / model.getGridWidth();
                 Platform.runLater(() -> {
-                    Cell[][] tab = modelRandom.getGrid();
+                    Cell[][] tab = model.getGrid();
                     cleanCanvas();
                     gc.setFill(Color.BLACK);
-                    for (int i = 0; i < modelRandom.getGridHeight(); i++) {
-                        for (int j = 0; j < modelRandom.getGridWidth(); j++)
+                    for (int i = 0; i < model.getGridHeight(); i++) {
+                        for (int j = 0; j < model.getGridWidth(); j++)
                             if (tab[i][j].getState() == CellGameOfLife.Type.ALIVE)
                                 gc.fillRect(j * width, i * height, height, width);
                     }
@@ -220,5 +204,50 @@ public class ControllerGameOfLife implements Initializable {
     public void reset(ActionEvent actionEvent) {
         cleanCanvas();
         model.clearGrid();
+    }
+
+    public void drawOnCanvas(MouseEvent mouseEvent, boolean type){
+        int x0 = 10, y0 = 39; //współrzędne początka canvasa w okienku
+        int x = (int)mouseEvent.getSceneX() - x0, y = (int)mouseEvent.getSceneY() - y0; //współrzędne w okienku
+
+        //rozmiary komórki
+        int height = (int) canvas2D.getHeight() / model.getGridHeight();
+        int width = (int) canvas2D.getWidth() / model.getGridWidth();
+
+        //pozycja komórki w oknie
+        int canvasX = (x/height)*height;
+        int canvasY = (y/width)*width;
+
+        //pozycja komórki w siatce
+        int gridX = canvasX/height;
+        int gridY = canvasY/width;
+
+        if (gridX > model.getGridWidth()-1)
+            gridX = model.getGridWidth()-1;
+
+        if (gridY > model.getGridHeight()-1)
+            gridY = model.getGridHeight()-1;
+
+
+        byte state = model.getGrid()[gridY][gridX].getState();
+
+        if (state == CellGameOfLife.Type.DEAD || type) {
+            model.getGrid()[gridY][gridX].setState(CellGameOfLife.Type.ALIVE);
+            gc.setFill(Color.BLACK);
+            gc.fillRect(canvasX, canvasY, height, width);
+        }
+        else if (state == CellGameOfLife.Type.ALIVE) {
+            model.getGrid()[gridY][gridX].setState(CellGameOfLife.Type.DEAD);
+            gc.setFill(Color.WHITE);
+            gc.fillRect(canvasX, canvasY, height, width);
+        }
+    }
+
+    public void mouseClick(MouseEvent mouseEvent) {
+        drawOnCanvas(mouseEvent, false);
+    }
+
+    public void mouseDrag(MouseEvent mouseEvent) {
+        drawOnCanvas(mouseEvent, true);
     }
 }

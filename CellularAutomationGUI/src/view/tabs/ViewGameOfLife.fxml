@@ -10,7 +10,7 @@
 
 <AnchorPane prefHeight="610.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.tabs.ControllerGameOfLife">
     <children>
-        <Canvas id="canvas1D" fx:id="canvas2D" height="600.0" layoutX="14.0" layoutY="14.0" width="600.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+        <Canvas id="canvas1D" fx:id="canvas2D" height="600.0" layoutX="14.0" layoutY="14.0" onMouseDragged="#mouseDrag" onMousePressed="#mouseClick" width="600.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
         <Button fx:id="startButton" layoutX="690.0" layoutY="390.0" mnemonicParsing="false" onAction="#start" prefHeight="25.0" prefWidth="110.0" text="START" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="330.0" />
         <ChoiceBox fx:id="choiceBoxGridSize" layoutX="687.0" layoutY="88.0" prefHeight="25.0" prefWidth="110.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="30.0" />
         <Label layoutX="624.0" layoutY="12.0" text="Grid size" AnchorPane.rightAnchor="74.0" AnchorPane.topAnchor="10.0" />
