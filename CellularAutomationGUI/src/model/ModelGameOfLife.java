@@ -2,6 +2,7 @@ package model;
 
 import model.cells.Cell;
 import model.cells.CellGameOfLife;
+import static model.cells.CellGameOfLife.*;
 import java.util.Random;
 
 public class ModelGameOfLife {
@@ -43,23 +44,23 @@ public class ModelGameOfLife {
         else jR = width + 1;
 
         int aliveNeighbours = 0;
-        if (frame[iG][jL].getState() == CellGameOfLife.Type.ALIVE) aliveNeighbours++;
-        if (frame[iG][j].getState() == CellGameOfLife.Type.ALIVE) aliveNeighbours++;
-        if (frame[iG][jR].getState() == CellGameOfLife.Type.ALIVE) aliveNeighbours++;
+        if (frame[iG][jL].getState() == State.ALIVE) aliveNeighbours++;
+        if (frame[iG][j].getState() == State.ALIVE) aliveNeighbours++;
+        if (frame[iG][jR].getState() == State.ALIVE) aliveNeighbours++;
 
-        if (frame[i][jL].getState() == CellGameOfLife.Type.ALIVE) aliveNeighbours++;//
-        if (frame[i][jR].getState() == CellGameOfLife.Type.ALIVE) aliveNeighbours++;
+        if (frame[i][jL].getState() == State.ALIVE) aliveNeighbours++;//
+        if (frame[i][jR].getState() == State.ALIVE) aliveNeighbours++;
 
-        if (frame[iD][jL].getState() == CellGameOfLife.Type.ALIVE) aliveNeighbours++;
-        if (frame[iD][j].getState() == CellGameOfLife.Type.ALIVE) aliveNeighbours++;
-        if (frame[iD][jR].getState() == CellGameOfLife.Type.ALIVE) aliveNeighbours++;
+        if (frame[iD][jL].getState() == State.ALIVE) aliveNeighbours++;
+        if (frame[iD][j].getState() == State.ALIVE) aliveNeighbours++;
+        if (frame[iD][jR].getState() == State.ALIVE) aliveNeighbours++;
 
-        if (frame[height][width].getState() == CellGameOfLife.Type.DEAD && aliveNeighbours == 3)
-            result = CellGameOfLife.Type.ALIVE;
-        else if (frame[height][width].getState() == CellGameOfLife.Type.ALIVE && (aliveNeighbours == 3 || aliveNeighbours == 2))
-            result = CellGameOfLife.Type.ALIVE;
+        if (frame[height][width].getState() == State.DEAD && aliveNeighbours == 3)
+            result = State.ALIVE;
+        else if (frame[height][width].getState() == State.ALIVE && (aliveNeighbours == 3 || aliveNeighbours == 2))
+            result = State.ALIVE;
         else
-            result = CellGameOfLife.Type.DEAD;
+            result = State.DEAD;
 
         return result;
     }
@@ -101,12 +102,12 @@ public class ModelGameOfLife {
     public void clearGrid(){
         for (int i = 0; i < gridHeight; i++)
             for (int j = 0; j < gridWidth; j++)
-                grid[i][j].setState(CellGameOfLife.Type.DEAD);
+                grid[i][j].setState(State.DEAD);
     }
 
     public void fillRandomly(int amount){
         Random rand = new Random();
         for (int i = 0; i < amount; i++)
-            grid[rand.nextInt(gridHeight - 1)][rand.nextInt(gridWidth - 1)].setState(CellGameOfLife.Type.ALIVE);
+            grid[rand.nextInt(gridHeight - 1)][rand.nextInt(gridWidth - 1)].setState(State.ALIVE);
     }
 }

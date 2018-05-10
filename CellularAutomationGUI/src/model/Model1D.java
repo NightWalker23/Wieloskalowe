@@ -13,7 +13,7 @@ public class Model1D {
         public static int PERIODIC = 2;
     }
 
-    public static class Option {
+    public static class State {
         public static int DEAD = 0;
         public static int ALIVE = 1;
     }
@@ -45,27 +45,27 @@ public class Model1D {
             if (type == Type.PERIODIC && index == t.length - 1) next = t[0];
             else next = t[index + 1];
 
-            if (prev == Option.ALIVE && that == Option.ALIVE && next == Option.ALIVE) result = rules[0];
-            else if (prev == Option.ALIVE && that == Option.ALIVE && next == Option.DEAD) result = rules[1];
-            else if (prev == Option.ALIVE && that == Option.DEAD && next == Option.ALIVE) result = rules[2];
-            else if (prev == Option.ALIVE && that == Option.DEAD && next == Option.DEAD) result = rules[3];
-            else if (prev == Option.DEAD && that == Option.ALIVE && next == Option.ALIVE) result = rules[4];
-            else if (prev == Option.DEAD && that == Option.ALIVE && next == Option.DEAD) result = rules[5];
-            else if (prev == Option.DEAD && that == Option.DEAD && next == Option.ALIVE) result = rules[6];
-            else if (prev == Option.DEAD && that == Option.DEAD && next == Option.DEAD) result = rules[7];
+            if (prev == State.ALIVE && that == State.ALIVE && next == State.ALIVE) result = rules[0];
+            else if (prev == State.ALIVE && that == State.ALIVE && next == State.DEAD) result = rules[1];
+            else if (prev == State.ALIVE && that == State.DEAD && next == State.ALIVE) result = rules[2];
+            else if (prev == State.ALIVE && that == State.DEAD && next == State.DEAD) result = rules[3];
+            else if (prev == State.DEAD && that == State.ALIVE && next == State.ALIVE) result = rules[4];
+            else if (prev == State.DEAD && that == State.ALIVE && next == State.DEAD) result = rules[5];
+            else if (prev == State.DEAD && that == State.DEAD && next == State.ALIVE) result = rules[6];
+            else if (prev == State.DEAD && that == State.DEAD && next == State.DEAD) result = rules[7];
         } else if (type == Type.NORMAL) {
             if (index == 0) {
                 next = t[index + 1];
-                if (that == Option.ALIVE && next == Option.ALIVE) result = rules[4];
-                else if (that == Option.ALIVE && next == Option.DEAD) result = rules[5];
-                else if (that == Option.DEAD && next == Option.ALIVE) result = rules[6];
-                else if (that == Option.DEAD && next == Option.DEAD) result = rules[7];
+                if (that == State.ALIVE && next == State.ALIVE) result = rules[4];
+                else if (that == State.ALIVE && next == State.DEAD) result = rules[5];
+                else if (that == State.DEAD && next == State.ALIVE) result = rules[6];
+                else if (that == State.DEAD && next == State.DEAD) result = rules[7];
             } else if (index == t.length - 1) {
                 prev = t[index - 1];
-                if (prev == Option.ALIVE && that == Option.ALIVE) result = rules[1];
-                else if (prev == Option.ALIVE && that == Option.DEAD) result = rules[3];
-                else if (prev == Option.DEAD && that == Option.ALIVE) result = rules[5];
-                else if (prev == Option.DEAD && that == Option.DEAD) result = rules[7];
+                if (prev == State.ALIVE && that == State.ALIVE) result = rules[1];
+                else if (prev == State.ALIVE && that == State.DEAD) result = rules[3];
+                else if (prev == State.DEAD && that == State.ALIVE) result = rules[5];
+                else if (prev == State.DEAD && that == State.DEAD) result = rules[7];
             }
         }
 

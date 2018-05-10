@@ -5,7 +5,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import model.cells.Cell;
-import model.cells.CellGameOfLife;
+import static model.cells.CellGameOfLife.*;
 
 import java.util.concurrent.TimeUnit;
 
@@ -16,16 +16,14 @@ public class Painter implements Runnable {
     private volatile boolean running;
     private volatile boolean paused;
     private final Object pauseLock = new Object();
-    private int speed;
 
-    public Painter(Canvas canvas2D, ModelGameOfLife model, GraphicsContext gc, int speed) {
+    public Painter(Canvas canvas2D, ModelGameOfLife model, GraphicsContext gc) {
         this.canvas2D = canvas2D;
         this.model = model;
         this.gc = gc;
         running = true;
         paused = false;
-        this.speed = speed;
-    }
+}
 
     private void cleanCanvas() {
         gc.setFill(Color.WHITE);
@@ -42,12 +40,12 @@ public class Painter implements Runnable {
                 gc.setFill(Color.BLACK);
                 for (int i = 0; i < model.getGridHeight(); i++) {
                     for (int j = 0; j < model.getGridWidth(); j++)
-                        if (tab[i][j].getState() == CellGameOfLife.Type.ALIVE)
+                        if (tab[i][j].getState() == State.ALIVE)
                             gc.fillRect(j * width, i * height, height, width);
                 }
             });
 
-            TimeUnit.MILLISECONDS.sleep(speed);
+            TimeUnit.MILLISECONDS.sleep(Global.animationSpeed);
         } catch (InterruptedException ignored) {
         }
     }

@@ -121,7 +121,7 @@ public class Controller1D implements Initializable {
         Platform.runLater(() -> {
             for (int i = 0; i < cellsInGrid; i++) {
                 for (int j = 0; j < cellsInGrid; j++)
-                    if (tab[0][j] == Model1D.Option.ALIVE)
+                    if (tab[0][j] == Model1D.State.ALIVE)
                         gc.fillRect(j * size, i * size, size, size);
                 tab[0] = rule.getResult(rule.getGrid());
             }

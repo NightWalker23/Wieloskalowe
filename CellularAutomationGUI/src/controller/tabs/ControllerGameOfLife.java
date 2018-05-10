@@ -1,6 +1,8 @@
 package controller.tabs;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,6 +12,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import model.Global;
 import model.cells.*;
 import model.ModelGameOfLife;
 import model.Painter;
@@ -110,6 +113,8 @@ public class ControllerGameOfLife implements Initializable {
         radio500.setToggleGroup(group);
         radio1000.setToggleGroup(group);
 
+        group.selectedToggleProperty().addListener((observable, oldValue, newValue) -> Global.animationSpeed = setSpeed());
+
         //blokowanie wpisywanie wartości innych niż liczbowych
         randomCellsField.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
@@ -122,7 +127,7 @@ public class ControllerGameOfLife implements Initializable {
         model = new ModelGameOfLife(gridHeight, gridWidth);
     }
 
-    public int setSpeed(){
+    private int setSpeed(){
         int speed = 0;
         if (group.getSelectedToggle() == radio10) speed = 10;
         else if (group.getSelectedToggle() == radio20) speed = 20;
@@ -144,12 +149,11 @@ public class ControllerGameOfLife implements Initializable {
         choiceBoxGridSize.setDisable(true);
 
         cleanCanvas();
-        int speed = setSpeed();
 
         //uruchomienie Garbage Collectora
         System.gc();
 
-        painter = new Painter(canvas2D, model, gc, speed);
+        painter = new Painter(canvas2D, model, gc);
         thread = new Thread(painter);
         thread.setDaemon(true);
         thread.start();
@@ -192,7 +196,7 @@ public class ControllerGameOfLife implements Initializable {
                     gc.setFill(Color.BLACK);
                     for (int i = 0; i < model.getGridHeight(); i++) {
                         for (int j = 0; j < model.getGridWidth(); j++)
-                            if (tab[i][j].getState() == CellGameOfLife.Type.ALIVE)
+                            if (tab[i][j].getState() == CellGameOfLife.State.ALIVE)
                                 gc.fillRect(j * width, i * height, height, width);
                     }
                 });
@@ -206,7 +210,7 @@ public class ControllerGameOfLife implements Initializable {
         model.clearGrid();
     }
 
-    public void drawOnCanvas(MouseEvent mouseEvent, boolean type){
+    private void drawOnCanvas(MouseEvent mouseEvent, boolean type){
         int x0 = 10, y0 = 39; //współrzędne początka canvasa w okienku
         int x = (int)mouseEvent.getSceneX() - x0, y = (int)mouseEvent.getSceneY() - y0; //współrzędne w okienku
 
@@ -224,23 +228,32 @@ public class ControllerGameOfLife implements Initializable {
 
         if (gridX > model.getGridWidth()-1)
             gridX = model.getGridWidth()-1;
+        if (gridX < 0)
+            gridX = 0;
 
         if (gridY > model.getGridHeight()-1)
             gridY = model.getGridHeight()-1;
+        if (gridY < 0)
+            gridY = 0;
 
 
-        byte state = model.getGrid()[gridY][gridX].getState();
+        int finalGridY = gridY;
+        int finalGridX = gridX;
+        Platform.runLater(() -> {
+            byte state = model.getGrid()[finalGridY][finalGridX].getState();
 
-        if (state == CellGameOfLife.Type.DEAD || type) {
-            model.getGrid()[gridY][gridX].setState(CellGameOfLife.Type.ALIVE);
-            gc.setFill(Color.BLACK);
-            gc.fillRect(canvasX, canvasY, height, width);
-        }
-        else if (state == CellGameOfLife.Type.ALIVE) {
-            model.getGrid()[gridY][gridX].setState(CellGameOfLife.Type.DEAD);
-            gc.setFill(Color.WHITE);
-            gc.fillRect(canvasX, canvasY, height, width);
-        }
+            if (state == CellGameOfLife.State.DEAD || type) {
+                model.getGrid()[finalGridY][finalGridX].setState(CellGameOfLife.State.ALIVE);
+                gc.setFill(Color.BLACK);
+                gc.fillRect(canvasX, canvasY, height, width);
+            }
+            else if (state == CellGameOfLife.State.ALIVE) {
+                model.getGrid()[finalGridY][finalGridX].setState(CellGameOfLife.State.DEAD);
+                gc.setFill(Color.WHITE);
+                gc.fillRect(canvasX, canvasY, height, width);
+            }
+        });
+
     }
 
     public void mouseClick(MouseEvent mouseEvent) {
