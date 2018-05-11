@@ -1,15 +1,17 @@
-package model;
+package model.painters;
 
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import model.Global;
+import model.ModelGameOfLife;
 import model.cells.Cell;
 import static model.cells.CellGameOfLife.*;
 
 import java.util.concurrent.TimeUnit;
 
-public class Painter implements Runnable {
+public class PainterGameOfLife implements Runnable {
     private Canvas canvas2D;
     private ModelGameOfLife model;
     private GraphicsContext gc;
@@ -17,7 +19,7 @@ public class Painter implements Runnable {
     private volatile boolean paused;
     private final Object pauseLock = new Object();
 
-    public Painter(Canvas canvas2D, ModelGameOfLife model, GraphicsContext gc) {
+    public PainterGameOfLife(Canvas canvas2D, ModelGameOfLife model, GraphicsContext gc) {
         this.canvas2D = canvas2D;
         this.model = model;
         this.gc = gc;
@@ -45,7 +47,7 @@ public class Painter implements Runnable {
                 }
             });
 
-            TimeUnit.MILLISECONDS.sleep(Global.animationSpeed);
+            TimeUnit.MILLISECONDS.sleep(Global.animationSpeedGameOfLife);
         } catch (InterruptedException ignored) {
         }
     }

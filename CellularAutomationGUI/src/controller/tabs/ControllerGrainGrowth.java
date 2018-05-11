@@ -1,6 +1,5 @@
 package controller.tabs;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -8,17 +7,18 @@ import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import model.Global;
-import model.cells.*;
-import model.ModelGameOfLife;
-import model.painters.PainterGameOfLife;
-import model.cells.Cell;
+import model.ModelGrainGrowth;
+
+import static model.ModelGrainGrowth.*;
+
+import model.painters.PainterGrainGrowth;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class ControllerGameOfLife implements Initializable {
+public class ControllerGrainGrowth implements Initializable {
     @FXML
     RadioButton radio10, radio20, radio50, radio100, radio200, radio500, radio1000;
     @FXML
@@ -26,16 +26,22 @@ public class ControllerGameOfLife implements Initializable {
     @FXML
     ChoiceBox<String> choiceBoxGridSize;
     @FXML
-    Button startButton, pauseButton, stopButton, randomFillButton, resetButton;
+    ChoiceBox<String> choiceBoxNeighborhoodType;
+    @FXML
+    ChoiceBox<String> choiceBoxEdgeType;
+    @FXML
+    Button startButton, pauseButton, stopButton;
     @FXML
     Canvas canvas2D;
 
     private ToggleGroup group = new ToggleGroup();
     private GraphicsContext gc;
-    private ModelGameOfLife model;
+    private ModelGrainGrowth model;
     private int gridHeight, gridWidth;
-    private PainterGameOfLife painterGameOfLife;
+    private PainterGrainGrowth painter;
     private Thread thread;
+    private NeighborhoodType nType;
+    private EdgeType eType;
 
     private void cleanCanvas() {
         gc.setFill(Color.WHITE);
@@ -50,7 +56,6 @@ public class ControllerGameOfLife implements Initializable {
         gridHeight = 10;
         gridWidth = 10;
 
-        //listener do choice boxa
         choiceBoxGridSize.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             final int value = newValue.intValue();
 
@@ -88,8 +93,50 @@ public class ControllerGameOfLife implements Initializable {
                     gridWidth = 600;
                     break;
             }
-            model = new ModelGameOfLife(gridHeight, gridWidth);
-            reset(new ActionEvent());
+        });
+
+
+        String[] neighboursOptions = new String[]{"von Neuman", "Moore", "Pentagonal random", "Hexagonal random"};
+        choiceBoxNeighborhoodType.setItems(FXCollections.observableArrayList(neighboursOptions));
+        choiceBoxNeighborhoodType.setValue("von Neuman");
+        nType = NeighborhoodType.vonNeuman;
+
+        choiceBoxNeighborhoodType.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            final int value = newValue.intValue();
+
+            switch (value) {
+                case 0:
+                    nType = NeighborhoodType.vonNeuman;
+                    break;
+                case 1:
+                    nType = NeighborhoodType.Moore;
+                    break;
+                case 2:
+                    nType = NeighborhoodType.randomPentagonal;
+                    break;
+                case 3:
+                    nType = NeighborhoodType.randomHexagonal;
+                    break;
+            }
+        });
+
+
+        String[] edgeOptions = new String[]{"Closed", "Periodic"};
+        choiceBoxEdgeType.setItems(FXCollections.observableArrayList(edgeOptions));
+        choiceBoxEdgeType.setValue("Closed");
+        eType = EdgeType.Closed;
+
+        choiceBoxEdgeType.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            final int value = newValue.intValue();
+
+            switch (value) {
+                case 0:
+                    eType = EdgeType.Closed;
+                    break;
+                case 1:
+                    eType = EdgeType.Periodic;
+                    break;
+            }
         });
 
         pauseButton.setDisable(true);
@@ -108,7 +155,7 @@ public class ControllerGameOfLife implements Initializable {
         radio500.setToggleGroup(group);
         radio1000.setToggleGroup(group);
 
-        group.selectedToggleProperty().addListener((observable, oldValue, newValue) -> Global.animationSpeedGameOfLife = setSpeed());
+        group.selectedToggleProperty().addListener((observable, oldValue, newValue) -> Global.animationSpeedGrainGrowth = setSpeed());
 
         //blokowanie wpisywanie wartości innych niż liczbowych
         randomCellsField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -118,11 +165,9 @@ public class ControllerGameOfLife implements Initializable {
             } catch (Exception ignored) {
             }
         });
-
-        model = new ModelGameOfLife(gridHeight, gridWidth);
     }
 
-    private int setSpeed(){
+    private int setSpeed() {
         int speed = 0;
         if (group.getSelectedToggle() == radio10) speed = 10;
         else if (group.getSelectedToggle() == radio20) speed = 20;
@@ -139,17 +184,20 @@ public class ControllerGameOfLife implements Initializable {
         startButton.setDisable(true);
         pauseButton.setDisable(false);
         stopButton.setDisable(false);
-        randomFillButton.setDisable(true);
-        resetButton.setDisable(true);
         choiceBoxGridSize.setDisable(true);
+        choiceBoxNeighborhoodType.setDisable(true);
+        choiceBoxEdgeType.setDisable(true);
 
         cleanCanvas();
 
         //uruchomienie Garbage Collectora
         System.gc();
 
-        painterGameOfLife = new PainterGameOfLife(canvas2D, model, gc);
-        thread = new Thread(painterGameOfLife);
+        int grainAmount = Integer.parseInt(randomCellsField.getText());
+        model = new ModelGrainGrowth(gridHeight, gridWidth, nType, grainAmount, eType);
+
+        painter = new PainterGrainGrowth(canvas2D, model, gc, this);
+        thread = new Thread(painter);
         thread.setDaemon(true);
         thread.start();
     }
@@ -157,105 +205,24 @@ public class ControllerGameOfLife implements Initializable {
     public void pause(ActionEvent actionEvent) {
         startButton.setDisable(true);
 
-        if (painterGameOfLife.isPaused())
-            painterGameOfLife.resume();
+        if (painter.isPaused())
+            painter.resume();
         else
-            painterGameOfLife.pause();
+            painter.pause();
     }
 
     public void stop(ActionEvent actionEvent) {
         startButton.setDisable(false);
         pauseButton.setDisable(true);
         stopButton.setDisable(true);
-        randomFillButton.setDisable(false);
-        resetButton.setDisable(false);
         choiceBoxGridSize.setDisable(false);
+        choiceBoxNeighborhoodType.setDisable(false);
+        choiceBoxEdgeType.setDisable(false);
 
-        painterGameOfLife.stop();
+        painter.stop();
     }
 
-    public void randomFill(ActionEvent actionEvent) {
-        int amount;
-        try {
-            amount = Integer.parseInt(randomCellsField.getText());
-            if (amount > 0) {
-                model = new ModelGameOfLife(gridHeight, gridWidth);
-                model.clearGrid();
-                model.fillRandomly(amount);
-
-                int height = (int) canvas2D.getHeight() / model.getGridHeight();
-                int width = (int) canvas2D.getWidth() / model.getGridWidth();
-                Platform.runLater(() -> {
-                    Cell[][] tab = model.getGrid();
-                    cleanCanvas();
-                    gc.setFill(Color.BLACK);
-                    for (int i = 0; i < model.getGridHeight(); i++) {
-                        for (int j = 0; j < model.getGridWidth(); j++)
-                            if (tab[i][j].getState() == CellGameOfLife.State.ALIVE)
-                                gc.fillRect(j * width, i * height, height, width);
-                    }
-                });
-            }
-        }
-        catch (Exception ignored){}
-    }
-
-    public void reset(ActionEvent actionEvent) {
-        cleanCanvas();
-        model.clearGrid();
-    }
-
-    private void drawOnCanvas(MouseEvent mouseEvent, boolean type){
-        int x0 = 10, y0 = 39; //współrzędne początka canvasa w okienku
-        int x = (int)mouseEvent.getSceneX() - x0, y = (int)mouseEvent.getSceneY() - y0; //współrzędne w okienku
-
-        //rozmiary komórki
-        int height = (int) canvas2D.getHeight() / model.getGridHeight();
-        int width = (int) canvas2D.getWidth() / model.getGridWidth();
-
-        //pozycja komórki w oknie
-        int canvasX = (x/height)*height;
-        int canvasY = (y/width)*width;
-
-        //pozycja komórki w siatce
-        int gridX = canvasX/height;
-        int gridY = canvasY/width;
-
-        if (gridX > model.getGridWidth()-1)
-            gridX = model.getGridWidth()-1;
-        if (gridX < 0)
-            gridX = 0;
-
-        if (gridY > model.getGridHeight()-1)
-            gridY = model.getGridHeight()-1;
-        if (gridY < 0)
-            gridY = 0;
-
-
-        int finalGridY = gridY;
-        int finalGridX = gridX;
-        Platform.runLater(() -> {
-            byte state = model.getGrid()[finalGridY][finalGridX].getState();
-
-            if (state == CellGameOfLife.State.DEAD || type) {
-                model.getGrid()[finalGridY][finalGridX].setState(CellGameOfLife.State.ALIVE);
-                gc.setFill(Color.BLACK);
-                gc.fillRect(canvasX, canvasY, height, width);
-            }
-            else if (state == CellGameOfLife.State.ALIVE) {
-                model.getGrid()[finalGridY][finalGridX].setState(CellGameOfLife.State.DEAD);
-                gc.setFill(Color.WHITE);
-                gc.fillRect(canvasX, canvasY, height, width);
-            }
-        });
-
-    }
-
-    public void mouseClick(MouseEvent mouseEvent) {
-        drawOnCanvas(mouseEvent, false);
-    }
-
-    public void mouseDrag(MouseEvent mouseEvent) {
-        drawOnCanvas(mouseEvent, true);
+    public void resetButtons(){
+        stop(new ActionEvent());
     }
 }

@@ -7,19 +7,16 @@ import java.util.Random;
 
 public class ModelGameOfLife {
     private Cell[][] grid;
-    private Cell[][] tmp;
     private int gridHeight, gridWidth;
 
     public ModelGameOfLife(int height, int wight) {
         gridHeight = height;
         gridWidth = wight;
         grid = new CellGameOfLife[gridHeight][gridWidth];
-        tmp = new CellGameOfLife[gridHeight][gridWidth];
 
         for (int i = 0; i < gridHeight; i++) {
             for (int j = 0; j < gridWidth; j++) {
                 grid[i][j] = new CellGameOfLife();
-                tmp[i][j] = new CellGameOfLife();
             }
         }
     }
@@ -108,6 +105,6 @@ public class ModelGameOfLife {
     public void fillRandomly(int amount){
         Random rand = new Random();
         for (int i = 0; i < amount; i++)
-            grid[rand.nextInt(gridHeight - 1)][rand.nextInt(gridWidth - 1)].setState(State.ALIVE);
+            grid[rand.nextInt(gridHeight)][rand.nextInt(gridWidth)].setState(State.ALIVE);
     }
 }
