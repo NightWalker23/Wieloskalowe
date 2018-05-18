@@ -8,27 +8,29 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="610.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.tabs.ControllerGrainGrowth">
+<AnchorPane fx:id="pane" prefHeight="610.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.tabs.ControllerGrainGrowth">
     <children>
-        <Canvas id="canvas1D" fx:id="canvas2D" height="600.0" layoutX="14.0" layoutY="14.0" width="600.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
-        <Button fx:id="startButton" layoutX="679.0" layoutY="415.0" mnemonicParsing="false" onAction="#start" prefHeight="25.0" prefWidth="110.0" text="START" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="415.0" />
-        <ChoiceBox fx:id="choiceBoxGridSize" layoutX="679.0" layoutY="153.0" prefHeight="25.0" prefWidth="110.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="153.0" />
-        <Label layoutX="679.0" layoutY="131.0" text="Grid size" AnchorPane.rightAnchor="75.0" AnchorPane.topAnchor="131.0" />
-      <Button fx:id="stopButton" layoutX="679.0" layoutY="485.0" mnemonicParsing="false" onAction="#stop" prefHeight="25.0" prefWidth="110.0" text="STOP" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="485.0" />
-      <Button fx:id="pauseButton" layoutX="679.0" layoutY="450.0" mnemonicParsing="false" onAction="#pause" prefHeight="25.0" prefWidth="110.0" text="PAUSE / RESUME" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="450.0" />
-      <TextField fx:id="randomCellsField" layoutX="679.0" layoutY="211.0" prefHeight="25.0" prefWidth="110.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="210.0" />
-      <Label layoutX="679.0" layoutY="188.0" text="Number of grains" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="188.0" />
-      <Label layoutX="679.0" layoutY="245.0" text="Speed in milliseconds" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="245.0" />
-      <RadioButton fx:id="radio10" layoutX="679.0" layoutY="265.0" mnemonicParsing="false" text="10" AnchorPane.rightAnchor="87.0" AnchorPane.topAnchor="265.0" />
-      <RadioButton fx:id="radio20" layoutX="679.0" layoutY="285.0" mnemonicParsing="false" text="20" AnchorPane.rightAnchor="87.0" AnchorPane.topAnchor="285.0" />
-      <RadioButton fx:id="radio50" layoutX="679.0" layoutY="305.0" mnemonicParsing="false" text="50" AnchorPane.rightAnchor="87.0" AnchorPane.topAnchor="305.0" />
-      <RadioButton fx:id="radio100" layoutX="679.0" layoutY="325.0" mnemonicParsing="false" text="100" AnchorPane.rightAnchor="80.0" AnchorPane.topAnchor="325.0" />
-      <RadioButton fx:id="radio200" layoutX="679.0" layoutY="345.0" mnemonicParsing="false" text="200" AnchorPane.rightAnchor="80.0" AnchorPane.topAnchor="345.0" />
-      <RadioButton fx:id="radio500" layoutX="679.0" layoutY="365.0" mnemonicParsing="false" text="500" AnchorPane.rightAnchor="80.0" AnchorPane.topAnchor="365.0" />
-      <RadioButton fx:id="radio1000" layoutX="679.0" layoutY="385.0" mnemonicParsing="false" text="1000" AnchorPane.rightAnchor="74.0" AnchorPane.topAnchor="385.0" />
-      <Label layoutX="679.0" layoutY="71.0" text="Neighborhood type" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="71.0" />
-      <ChoiceBox fx:id="choiceBoxNeighborhoodType" layoutX="679.0" layoutY="98.0" prefHeight="25.0" prefWidth="110.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="93.0" />
-      <Label layoutX="679.0" layoutY="14.0" text="Edge type" AnchorPane.rightAnchor="67.0" AnchorPane.topAnchor="10.0" />
-      <ChoiceBox fx:id="choiceBoxEdgeType" layoutX="685.0" layoutY="37.0" prefHeight="25.0" prefWidth="110.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="32.0" />
+        <Canvas id="canvas1D" fx:id="canvas2D" height="600.0" layoutX="10.0" layoutY="10.0" onMouseClicked="#addGrainOnCanvas" width="600.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="190.0" AnchorPane.topAnchor="10.0" />
+        <Button fx:id="startButton" layoutX="679.0" layoutY="415.0" mnemonicParsing="false" onAction="#start" prefHeight="25.0" prefWidth="170.0" text="START" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="415.0" />
+      <Button fx:id="stopButton" layoutX="679.0" layoutY="485.0" mnemonicParsing="false" onAction="#stop" prefHeight="25.0" prefWidth="170.0" text="STOP" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="485.0" />
+      <Button fx:id="pauseButton" layoutX="679.0" layoutY="450.0" mnemonicParsing="false" onAction="#pause" prefHeight="25.0" prefWidth="170.0" text="PAUSE / RESUME" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="450.0" />
+      <TextField fx:id="randomCellsField" layoutX="677.0" layoutY="251.0" prefHeight="25.0" prefWidth="170.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="251.0" />
+      <Label layoutX="617.0" layoutY="228.0" text="Number of grains" AnchorPane.rightAnchor="85.0" AnchorPane.topAnchor="228.0" />
+      <Label layoutX="620.0" layoutY="352.0" text="Speed in milliseconds" AnchorPane.rightAnchor="65.0" AnchorPane.topAnchor="352.0" />
+      <Label layoutX="619.0" layoutY="70.0" text="Neighborhood type" AnchorPane.rightAnchor="75.0" AnchorPane.topAnchor="70.0" />
+      <ChoiceBox fx:id="choiceBoxNeighborhoodType" layoutX="679.0" layoutY="98.0" prefHeight="25.0" prefWidth="170.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="93.0" />
+      <Label layoutX="679.0" layoutY="14.0" text="Edge type" AnchorPane.rightAnchor="127.0" AnchorPane.topAnchor="10.0" />
+      <ChoiceBox fx:id="choiceBoxEdgeType" layoutX="685.0" layoutY="37.0" prefHeight="25.0" prefWidth="170.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="32.0" />
+      <Slider fx:id="sliderGridHeight" blockIncrement="1.0" layoutX="623.0" layoutY="151.0" onKeyPressed="#gridHeightPressed" onMouseClicked="#setGridHeight" onMouseDragged="#setGridHeight" onMouseReleased="#heightDone" prefHeight="14.0" prefWidth="140.0" AnchorPane.rightAnchor="37.0" AnchorPane.topAnchor="150.0" />
+      <Slider fx:id="sliderGridWidth" blockIncrement="1.0" layoutX="623.0" layoutY="191.0" onKeyPressed="#gridWidthPressed" onMouseClicked="#setGridWidth" onMouseDragged="#setGridWidth" onMouseReleased="#widthtDone" prefHeight="14.0" prefWidth="140.0" AnchorPane.rightAnchor="37.0" AnchorPane.topAnchor="190.0" />
+      <Label fx:id="labelGridHeight" layoutX="783.0" layoutY="150.0" text="1" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="150.0" />
+      <Label fx:id="labelGridWidth" layoutX="783.0" layoutY="189.0" text="1" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="190.0" />
+      <Label layoutX="623.0" layoutY="126.0" text="Grain Height" AnchorPane.rightAnchor="112.0" AnchorPane.topAnchor="130.0" />
+      <Label layoutX="627.0" layoutY="174.0" text="Grain Width" AnchorPane.rightAnchor="116.0" AnchorPane.topAnchor="170.0" />
+      <Slider fx:id="sliderAnimationSpeed" blockIncrement="1.0" layoutX="620.0" layoutY="372.0" max="1000.0" min="10.0" onKeyPressed="#animationSpeedPressed" onMouseClicked="#setAnimationSpeed" onMouseDragged="#setAnimationSpeed" value="10.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="372.0" />
+      <Label fx:id="labelAnimationSpeed" layoutX="776.0" layoutY="369.0" text="10" AnchorPane.rightAnchor="11.0" />
+      <Button fx:id="fillRandomlyButton" layoutX="615.0" layoutY="285.0" mnemonicParsing="false" onAction="#fillRandomly" prefHeight="25.0" prefWidth="170.0" text="Fill randomly" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="285.0" />
+      <Button fx:id="resetButton" layoutX="621.0" layoutY="320.0" mnemonicParsing="false" onAction="#reset" prefHeight="25.0" prefWidth="170.0" text="Reset" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="315.0" />
+      <Label fx:id="labelGridSize" layoutX="623.0" layoutY="207.0" prefHeight="17.0" prefWidth="170.0" text="Grid size: 600x600" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="210.0" />
     </children>
 </AnchorPane>

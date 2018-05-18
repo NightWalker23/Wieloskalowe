@@ -4,7 +4,6 @@ import controller.tabs.ControllerGrainGrowth;
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import model.Global;
 import model.ModelGrainGrowth;
 import model.cells.CellGrain;
@@ -20,7 +19,6 @@ public class PainterGrainGrowth implements Runnable {
     private volatile boolean running;
     private volatile boolean paused;
     private final Object pauseLock = new Object();
-    private boolean firstOne = true;
     private ControllerGrainGrowth cgg;
 
     public PainterGrainGrowth(Canvas canvas2D, ModelGrainGrowth model, GraphicsContext gc, ControllerGrainGrowth controllerGrainGrowth) {
@@ -33,8 +31,7 @@ public class PainterGrainGrowth implements Runnable {
     }
 
     private void cleanCanvas() {
-        gc.setFill(Color.WHITE);
-        gc.fillRect(0, 0, canvas2D.getWidth(), canvas2D.getHeight());
+        gc.clearRect(0, 0, canvas2D.getWidth(), canvas2D.getHeight());
     }
 
     private int getNumberOfEmptyGrains(CellGrain[][] tab) {
@@ -48,17 +45,11 @@ public class PainterGrainGrowth implements Runnable {
     }
 
     private void paint() {
-        int height = (int) canvas2D.getHeight() / model.getGridHeight();
-        int width = (int) canvas2D.getWidth() / model.getGridWidth();
+        int height = Global.grainHeight;
+        int width = Global.grainWidth;
         try {
             Platform.runLater(() -> {
-                CellGrain[][] tab;
-                if (firstOne) {
-                    tab = model.getGrid();
-                    firstOne = false;
-                } else {
-                    tab = model.getResult(model.getGrid());
-                }
+                CellGrain[][] tab = model.getResult(model.getGrid());
 
                 if (getNumberOfEmptyGrains(tab) == 0) {
                     stop();
@@ -70,7 +61,7 @@ public class PainterGrainGrowth implements Runnable {
                     for (int j = 0; j < model.getGridWidth(); j++) {
                         if (tab[i][j].getState() == State.GRAIN) {
                             gc.setFill(((ModelGrainGrowth.GrainType) model.getListOfGrains().get(tab[i][j].getId() - 1)).getGrainColor());
-                            gc.fillRect(j * width, i * height, height, width);
+                            gc.fillRect(j * height, i * width, height, width);
                         }
                     }
                 }
