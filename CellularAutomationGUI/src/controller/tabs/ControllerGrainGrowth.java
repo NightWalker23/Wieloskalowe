@@ -53,8 +53,7 @@ public class ControllerGrainGrowth implements Initializable {
     private EdgeType eType;
     private int grainHeight, grainWidth;
 
-    private void cleanCanvas()
-    {
+    private void cleanCanvas() {
         gc.setFill(Color.WHITE);
         gc.clearRect(0,0,canvas2D.getHeight(),canvas2D.getWidth());
         if (model != null) gc.fillRect(0, 0, model.getGridWidth()*grainHeight, model.getGridHeight()*grainWidth);
@@ -132,6 +131,7 @@ public class ControllerGrainGrowth implements Initializable {
                     eType = EdgeType.Periodic;
                     break;
             }
+            model = new ModelGrainGrowth(gridHeight, gridWidth, nType, eType);
         });
 
         pauseButton.setDisable(true);

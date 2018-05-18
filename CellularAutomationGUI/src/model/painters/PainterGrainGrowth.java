@@ -4,6 +4,7 @@ import controller.tabs.ControllerGrainGrowth;
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import model.Global;
 import model.ModelGrainGrowth;
 import model.cells.CellGrain;
@@ -31,7 +32,9 @@ public class PainterGrainGrowth implements Runnable {
     }
 
     private void cleanCanvas() {
-        gc.clearRect(0, 0, canvas2D.getWidth(), canvas2D.getHeight());
+        gc.setFill(Color.WHITE);
+        if (model != null) gc.fillRect(0, 0, model.getGridWidth() * Global.grainHeight, model.getGridHeight() * Global.grainWidth);
+        else gc.fillRect(0, 0, canvas2D.getHeight() * Global.grainHeight, canvas2D.getWidth() * Global.grainWidth);
     }
 
     private int getNumberOfEmptyGrains(CellGrain[][] tab) {

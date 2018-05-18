@@ -46,8 +46,11 @@ public class ModelGrainGrowth {
         listOfGrains = new ArrayList<>();
     }
 
-    public void createGrid() {
+    public void setEdgeType(EdgeType edgeType) {
+        this.edgeType = edgeType;
+    }
 
+    public void createGrid() {
         grid = new CellGrain[gridHeight][gridWidth];
 
         for (int i = 0; i < gridHeight; i++)
