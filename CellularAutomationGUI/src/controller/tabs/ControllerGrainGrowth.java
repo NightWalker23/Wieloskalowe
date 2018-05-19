@@ -3,7 +3,6 @@ package controller.tabs;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
@@ -15,16 +14,14 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import model.Global;
 import model.ModelGrainGrowth;
-
 import static model.ModelGrainGrowth.*;
-
 import model.cells.CellGrain;
 import model.painters.PainterGrainGrowth;
-
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import static model.cells.CellGrain.State.*;
+import static model.ModelGrainGrowth.NeighborhoodType.*;
+import static model.ModelGrainGrowth.EdgeType.*;
+import static model.ModelGrainGrowth.TypeOfPlacement.*;
 
 public class ControllerGrainGrowth implements Initializable {
     @FXML
@@ -34,13 +31,15 @@ public class ControllerGrainGrowth implements Initializable {
     @FXML
     Slider sliderGridHeight, sliderGridWidth, sliderAnimationSpeed;
     @FXML
-    TextField randomCellsField;
+    TextField numberOfCellsField, radiusField;
     @FXML
     ChoiceBox<String> choiceBoxNeighborhoodType;
     @FXML
     ChoiceBox<String> choiceBoxEdgeType;
     @FXML
-    Button startButton, pauseButton, stopButton, fillRandomlyButton, resetButton;
+    ChoiceBox<String> choiceTypeOfPlacement;
+    @FXML
+    Button startButton, pauseButton, stopButton, fillButton, resetButton;
     @FXML
     Canvas canvas2D;
 
@@ -51,6 +50,7 @@ public class ControllerGrainGrowth implements Initializable {
     private Thread thread;
     private NeighborhoodType nType;
     private EdgeType eType;
+    private TypeOfPlacement pType;
     private int grainHeight, grainWidth;
 
     private void cleanCanvas() {
@@ -71,44 +71,43 @@ public class ControllerGrainGrowth implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         canvas2D.setHeight(600);
         canvas2D.setWidth(600);
+        gc = canvas2D.getGraphicsContext2D();
 
         String[] neighboursOptions = new String[]{"von Neuman", "Moore", "Pentagonal left", "Pentagonal right", "Pentagonal up", "Pentagonal down", "Pentagonal random", "Hexagonal left", "Hexagonal right", "Hexagonal random"};
         choiceBoxNeighborhoodType.setItems(FXCollections.observableArrayList(neighboursOptions));
         choiceBoxNeighborhoodType.setValue("von Neuman");
         nType = NeighborhoodType.vonNeuman;
         choiceBoxNeighborhoodType.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
-            final int value = newValue.intValue();
-
-            switch (value) {
+            switch (newValue.intValue()) {
                 case 0:
-                    nType = NeighborhoodType.vonNeuman;
+                    nType = vonNeuman;
                     break;
                 case 1:
-                    nType = NeighborhoodType.Moore;
+                    nType = Moore;
                     break;
                 case 2:
-                    nType = NeighborhoodType.leftPentagonal;
+                    nType = leftPentagonal;
                     break;
                 case 3:
-                    nType = NeighborhoodType.rightPentagonal;
+                    nType = rightPentagonal;
                     break;
                 case 4:
-                    nType = NeighborhoodType.upPentagonal;
+                    nType = upPentagonal;
                     break;
                 case 5:
-                    nType = NeighborhoodType.downPentagonal;
+                    nType = downPentagonal;
                     break;
                 case 6:
-                    nType = NeighborhoodType.randomPentagonal;
+                    nType = randomPentagonal;
                     break;
                 case 7:
-                    nType = NeighborhoodType.leftHexagonal;
+                    nType = leftHexagonal;
                     break;
                 case 8:
-                    nType = NeighborhoodType.rightHexagonal;
+                    nType = rightHexagonal;
                     break;
                 case 9:
-                    nType = NeighborhoodType.randomHexagonal;
+                    nType = randomHexagonal;
                     break;
             }
 
@@ -121,30 +120,53 @@ public class ControllerGrainGrowth implements Initializable {
         choiceBoxEdgeType.setValue("Closed");
         eType = EdgeType.Closed;
         choiceBoxEdgeType.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
-            final int value = newValue.intValue();
-
-            switch (value) {
+            switch (newValue.intValue()) {
                 case 0:
-                    eType = EdgeType.Closed;
+                    eType = Closed;
                     break;
                 case 1:
-                    eType = EdgeType.Periodic;
+                    eType = Periodic;
                     break;
             }
             model = new ModelGrainGrowth(gridHeight, gridWidth, nType, eType);
         });
 
-        pauseButton.setDisable(true);
-        stopButton.setDisable(true);
-
-        gc = canvas2D.getGraphicsContext2D();
-        cleanCanvas();
+        String[] placementOptions = new String[]{"Random", "Evenly placement", "Placement with radius"};
+        choiceTypeOfPlacement.setItems(FXCollections.observableArrayList(placementOptions));
+        choiceTypeOfPlacement.setValue("Random");
+        choiceTypeOfPlacement.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            switch (newValue.intValue()) {
+                case 0:
+                    pType = Random;
+                    radiusField.setDisable(true);
+                    if (model != null) model.setPlacementType(Random);
+                    break;
+                case 1:
+                    pType = EvenlyPlacement;
+                    radiusField.setDisable(false);
+                    if (model != null) model.setPlacementType(EvenlyPlacement);
+                    break;
+                case 2:
+                    pType = RandomWithRadius;
+                    radiusField.setDisable(false);
+                    if (model != null) model.setPlacementType(RandomWithRadius);
+                    break;
+            }
+            model = new ModelGrainGrowth(gridHeight, gridWidth, nType, eType);
+        });
 
         //blokowanie wpisywanie wartości innych niż liczbowych
-        randomCellsField.textProperty().addListener((observable, oldValue, newValue) -> {
+        numberOfCellsField.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
                 if (!newValue.matches("\\d*"))
-                    randomCellsField.setText(oldValue);
+                    numberOfCellsField.setText(oldValue);
+            } catch (Exception ignored) {
+            }
+        });
+        radiusField.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                if (!newValue.matches("\\d*"))
+                    radiusField.setText(oldValue);
             } catch (Exception ignored) {
             }
         });
@@ -155,16 +177,20 @@ public class ControllerGrainGrowth implements Initializable {
         sliderGridWidth.setMin(1);
         sliderGridWidth.setMax(canvas2D.getWidth());
 
-        grainHeight = 1;
-        grainWidth = 1;
-
         sliderAnimationSpeed.setMin(10);
         sliderAnimationSpeed.setMax(1000);
         sliderAnimationSpeed.setValue(10);
 
+        grainHeight = 1;
+        grainWidth = 1;
         gridWidth = (int) canvas2D.getHeight() / grainHeight;
         gridHeight = (int) canvas2D.getWidth() / grainWidth;
         model = new ModelGrainGrowth(gridHeight, gridWidth, nType, eType);
+        cleanCanvas();
+
+        pauseButton.setDisable(true);
+        stopButton.setDisable(true);
+        radiusField.setDisable(true);
     }
 
     private void setLabelGridSize() {
@@ -255,17 +281,33 @@ public class ControllerGrainGrowth implements Initializable {
         });
     }
 
-    public void fillRandomly(ActionEvent actionEvent) {
-        int grainAmount;
+    public void fillCanvas(ActionEvent actionEvent) {
+        int grainAmount, distance_radius;
         try {
-            grainAmount = Integer.parseInt(randomCellsField.getText());
+            grainAmount = Integer.parseInt(numberOfCellsField.getText());
+            distance_radius = Integer.parseInt(radiusField.getText());
         } catch (NumberFormatException e) {
             grainAmount = 1;
+            distance_radius = 1;
         }
 
         if (model != null) {
-            if (model.fillRandomly(grainAmount)) refreshCanvas();
-            else displayAlert("Nie ma wystarczająco dużo miejsca aby dodać " + grainAmount + " dodatkowych ziaren.");
+            if (pType == Random) {
+                if (model.fillRandomly(grainAmount)) refreshCanvas();
+                else
+                    displayAlert("Nie ma wystarczająco dużo miejsca aby dodać " + grainAmount + " dodatkowych ziaren.");
+            }
+            else if (pType == EvenlyPlacement){
+                if (model.fillEvenlyPlacement(grainAmount, distance_radius)) refreshCanvas();
+                else
+                    displayAlert("Nie ma wystarczająco dużo miejsca aby dodać " + grainAmount +
+                            " dodatkowych ziaren, przy odległości między ziarnami równej " + distance_radius +
+                            " i rozmiarze ziaren równym " + grainHeight + "x" + grainWidth);
+            }
+            else if (pType == RandomWithRadius){
+                reset(actionEvent);
+
+            }
         }
     }
 

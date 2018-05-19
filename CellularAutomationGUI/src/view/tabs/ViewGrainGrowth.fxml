@@ -11,12 +11,12 @@
 <AnchorPane fx:id="pane" prefHeight="610.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.tabs.ControllerGrainGrowth">
     <children>
         <Canvas id="canvas1D" fx:id="canvas2D" height="600.0" layoutX="10.0" layoutY="10.0" onMouseClicked="#addGrainOnCanvas" width="600.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="190.0" AnchorPane.topAnchor="10.0" />
-        <Button fx:id="startButton" layoutX="679.0" layoutY="415.0" mnemonicParsing="false" onAction="#start" prefHeight="25.0" prefWidth="170.0" text="START" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="415.0" />
-      <Button fx:id="stopButton" layoutX="679.0" layoutY="485.0" mnemonicParsing="false" onAction="#stop" prefHeight="25.0" prefWidth="170.0" text="STOP" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="485.0" />
-      <Button fx:id="pauseButton" layoutX="679.0" layoutY="450.0" mnemonicParsing="false" onAction="#pause" prefHeight="25.0" prefWidth="170.0" text="PAUSE / RESUME" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="450.0" />
-      <TextField fx:id="randomCellsField" layoutX="677.0" layoutY="251.0" prefHeight="25.0" prefWidth="170.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="251.0" />
-      <Label layoutX="617.0" layoutY="228.0" text="Number of grains" AnchorPane.rightAnchor="85.0" AnchorPane.topAnchor="228.0" />
-      <Label layoutX="620.0" layoutY="352.0" text="Speed in milliseconds" AnchorPane.rightAnchor="65.0" AnchorPane.topAnchor="352.0" />
+        <Button fx:id="startButton" layoutX="620.0" layoutY="511.0" mnemonicParsing="false" onAction="#start" prefHeight="25.0" prefWidth="170.0" text="START" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="511.0" />
+      <Button fx:id="stopButton" layoutX="620.0" layoutY="581.0" mnemonicParsing="false" onAction="#stop" prefHeight="25.0" prefWidth="170.0" text="STOP" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="581.0" />
+      <Button fx:id="pauseButton" layoutX="620.0" layoutY="546.0" mnemonicParsing="false" onAction="#pause" prefHeight="25.0" prefWidth="170.0" text="PAUSE / RESUME" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="546.0" />
+      <TextField fx:id="numberOfCellsField" layoutX="620.0" layoutY="310.0" prefHeight="25.0" prefWidth="170.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="312.0" />
+      <Label layoutX="621.0" layoutY="287.0" text="Number of grains" AnchorPane.rightAnchor="85.0" AnchorPane.topAnchor="290.0" />
+      <Label layoutX="621.0" layoutY="465.0" text="Speed in milliseconds" AnchorPane.rightAnchor="64.0" AnchorPane.topAnchor="465.0" />
       <Label layoutX="619.0" layoutY="70.0" text="Neighborhood type" AnchorPane.rightAnchor="75.0" AnchorPane.topAnchor="70.0" />
       <ChoiceBox fx:id="choiceBoxNeighborhoodType" layoutX="679.0" layoutY="98.0" prefHeight="25.0" prefWidth="170.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="93.0" />
       <Label layoutX="679.0" layoutY="14.0" text="Edge type" AnchorPane.rightAnchor="127.0" AnchorPane.topAnchor="10.0" />
@@ -27,10 +27,14 @@
       <Label fx:id="labelGridWidth" layoutX="783.0" layoutY="189.0" text="1" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="190.0" />
       <Label layoutX="623.0" layoutY="126.0" text="Grain Height" AnchorPane.rightAnchor="112.0" AnchorPane.topAnchor="130.0" />
       <Label layoutX="627.0" layoutY="174.0" text="Grain Width" AnchorPane.rightAnchor="116.0" AnchorPane.topAnchor="170.0" />
-      <Slider fx:id="sliderAnimationSpeed" blockIncrement="1.0" layoutX="620.0" layoutY="372.0" max="1000.0" min="10.0" onKeyPressed="#animationSpeedPressed" onMouseClicked="#setAnimationSpeed" onMouseDragged="#setAnimationSpeed" value="10.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="372.0" />
-      <Label fx:id="labelAnimationSpeed" layoutX="776.0" layoutY="369.0" text="10" AnchorPane.rightAnchor="11.0" />
-      <Button fx:id="fillRandomlyButton" layoutX="615.0" layoutY="285.0" mnemonicParsing="false" onAction="#fillRandomly" prefHeight="25.0" prefWidth="170.0" text="Fill randomly" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="285.0" />
-      <Button fx:id="resetButton" layoutX="621.0" layoutY="320.0" mnemonicParsing="false" onAction="#reset" prefHeight="25.0" prefWidth="170.0" text="Reset" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="315.0" />
+      <Slider fx:id="sliderAnimationSpeed" blockIncrement="1.0" layoutX="621.0" layoutY="485.0" max="1000.0" min="10.0" onKeyPressed="#animationSpeedPressed" onMouseClicked="#setAnimationSpeed" onMouseDragged="#setAnimationSpeed" value="10.0" AnchorPane.rightAnchor="39.0" AnchorPane.topAnchor="485.0" />
+      <Label fx:id="labelAnimationSpeed" layoutX="777.0" layoutY="482.0" text="10" AnchorPane.rightAnchor="10.0" />
+      <Button fx:id="fillButton" layoutX="620.0" layoutY="400.0" mnemonicParsing="false" onAction="#fillCanvas" prefHeight="25.0" prefWidth="170.0" text="Fill" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="400.0" />
+      <Button fx:id="resetButton" layoutX="620.0" layoutY="430.0" mnemonicParsing="false" onAction="#reset" prefHeight="25.0" prefWidth="170.0" text="Reset" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="430.0" />
       <Label fx:id="labelGridSize" layoutX="623.0" layoutY="207.0" prefHeight="17.0" prefWidth="170.0" text="Grid size: 600x600" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="210.0" />
+      <ChoiceBox fx:id="choiceTypeOfPlacement" layoutX="620.0" layoutY="262.0" prefHeight="25.0" prefWidth="170.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="260.0" />
+      <TextField fx:id="radiusField" layoutX="620.0" layoutY="365.0" prefHeight="25.0" prefWidth="170.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="362.0" />
+      <Label layoutX="619.0" layoutY="238.0" text="Type of placement" AnchorPane.rightAnchor="81.0" AnchorPane.topAnchor="238.0" />
+      <Label layoutX="620.0" layoutY="337.0" text="Distance/Radius" AnchorPane.rightAnchor="94.0" AnchorPane.topAnchor="342.0" />
     </children>
 </AnchorPane>

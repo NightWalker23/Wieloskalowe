@@ -15,6 +15,7 @@ public class ModelGrainGrowth {
     private int gridHeight, gridWidth;
     private NeighborhoodType neighborhoodType;
     private EdgeType edgeType;
+    private TypeOfPlacement placementType;
     private List<GrainType> listOfGrains;
 
     public enum EdgeType {
@@ -23,6 +24,10 @@ public class ModelGrainGrowth {
 
     public enum NeighborhoodType {
         vonNeuman, Moore, leftPentagonal, rightPentagonal, upPentagonal, downPentagonal, randomPentagonal, leftHexagonal, rightHexagonal, randomHexagonal
+    }
+
+    public enum TypeOfPlacement {
+        Random, EvenlyPlacement, RandomWithRadius
     }
 
     public class GrainType {
@@ -48,6 +53,10 @@ public class ModelGrainGrowth {
 
     public void setEdgeType(EdgeType edgeType) {
         this.edgeType = edgeType;
+    }
+
+    public void setPlacementType(TypeOfPlacement placementType) {
+        this.placementType = placementType;
     }
 
     public void createGrid() {
@@ -433,6 +442,38 @@ public class ModelGrainGrowth {
                     grid[x][y].setId(i + 1);
                 } else i--;
             }
+        }
+        else return false;
+
+        return true;
+    }
+
+    public boolean fillEvenlyPlacement(int grainAmount, int distance) {
+        Random rand = new Random();
+        int maxOnHeight = gridHeight/distance - 1;
+        int maxOnWidth = gridWidth/distance - 1;
+        int maxGrainNumber = maxOnHeight * maxOnWidth;
+
+        if (getNumberOfEmptyGrains() >= grainAmount && grainAmount <= maxGrainNumber) {
+            reset();
+            int x, y = distance;
+            int counter = 1;
+
+            for (int i = 0; i < grainAmount; i++) {
+                listOfGrains.add(new GrainType(rand.nextDouble(), rand.nextDouble(), rand.nextDouble()));
+
+                x = distance * counter;
+                counter++;
+
+                grid[x][y].setState(GRAIN);
+                grid[x][y].setId(i + 1);
+
+                if (counter > maxOnHeight){
+                    counter = 1;
+                    y += distance;
+                }
+            }
+
         }
         else return false;
 
