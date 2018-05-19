@@ -129,6 +129,7 @@ public class ControllerGrainGrowth implements Initializable {
                     break;
             }
             model = new ModelGrainGrowth(gridHeight, gridWidth, nType, eType);
+            cleanCanvas();
         });
 
         String[] placementOptions = new String[]{"Random", "Evenly placement", "Placement with radius"};
@@ -308,8 +309,7 @@ public class ControllerGrainGrowth implements Initializable {
                             " i rozmiarze ziaren równym " + grainHeight + "x" + grainWidth);
             }
             else if (pType == RandomWithRadius){
-                reset(actionEvent);
-
+                
             }
         }
     }

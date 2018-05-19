@@ -456,24 +456,24 @@ public class ModelGrainGrowth {
 
         if (getNumberOfEmptyGrains() >= grainAmount && grainAmount <= maxGrainNumber) {
             reset();
-            int x, y = distance;
+            int x=distance-1, y = distance-1;
             int counter = 1;
 
             for (int i = 0; i < grainAmount; i++) {
                 listOfGrains.add(new GrainType(rand.nextDouble(), rand.nextDouble(), rand.nextDouble()));
 
-                x = distance * counter;
-                counter++;
-
                 grid[x][y].setState(GRAIN);
                 grid[x][y].setId(i + 1);
 
+                x += distance;
+                counter++;
+
                 if (counter > maxOnHeight){
                     counter = 1;
+                    x = distance-1;
                     y += distance;
                 }
             }
-
         }
         else return false;
 
