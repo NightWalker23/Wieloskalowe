@@ -134,25 +134,24 @@ public class ControllerGrainGrowth implements Initializable {
         String[] placementOptions = new String[]{"Random", "Evenly placement", "Placement with radius"};
         choiceTypeOfPlacement.setItems(FXCollections.observableArrayList(placementOptions));
         choiceTypeOfPlacement.setValue("Random");
+        pType = Random;
         choiceTypeOfPlacement.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             switch (newValue.intValue()) {
                 case 0:
                     pType = Random;
                     radiusField.setDisable(true);
-                    if (model != null) model.setPlacementType(Random);
                     break;
                 case 1:
                     pType = EvenlyPlacement;
                     radiusField.setDisable(false);
-                    if (model != null) model.setPlacementType(EvenlyPlacement);
                     break;
                 case 2:
                     pType = RandomWithRadius;
                     radiusField.setDisable(false);
-                    if (model != null) model.setPlacementType(RandomWithRadius);
                     break;
             }
-            model = new ModelGrainGrowth(gridHeight, gridWidth, nType, eType);
+            if (model != null)
+                model.setPlacementType(pType);
         });
 
         //blokowanie wpisywanie wartości innych niż liczbowych
@@ -186,6 +185,7 @@ public class ControllerGrainGrowth implements Initializable {
         gridWidth = (int) canvas2D.getHeight() / grainHeight;
         gridHeight = (int) canvas2D.getWidth() / grainWidth;
         model = new ModelGrainGrowth(gridHeight, gridWidth, nType, eType);
+        model.setPlacementType(pType);
         cleanCanvas();
 
         pauseButton.setDisable(true);
@@ -285,9 +285,12 @@ public class ControllerGrainGrowth implements Initializable {
         int grainAmount, distance_radius;
         try {
             grainAmount = Integer.parseInt(numberOfCellsField.getText());
-            distance_radius = Integer.parseInt(radiusField.getText());
         } catch (NumberFormatException e) {
             grainAmount = 1;
+        }
+        try {
+            distance_radius = Integer.parseInt(radiusField.getText());
+        } catch (NumberFormatException e) {
             distance_radius = 1;
         }
 
