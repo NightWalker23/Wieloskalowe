@@ -55,9 +55,9 @@ public class ControllerGrainGrowth implements Initializable {
 
     private void cleanCanvas() {
         gc.setFill(Color.WHITE);
-        gc.clearRect(0,0,canvas2D.getHeight(),canvas2D.getWidth());
-        if (model != null) gc.fillRect(0, 0, model.getGridWidth()*grainHeight, model.getGridHeight()*grainWidth);
-        else gc.fillRect(0, 0,canvas2D.getHeight()*grainHeight,canvas2D.getWidth()*grainWidth);
+        gc.clearRect(0, 0, canvas2D.getHeight(), canvas2D.getWidth());
+        if (model != null) gc.fillRect(0, 0, model.getGridWidth() * grainHeight, model.getGridHeight() * grainWidth);
+        else gc.fillRect(0, 0, canvas2D.getHeight() * grainHeight, canvas2D.getWidth() * grainWidth);
     }
 
     private void displayAlert(String message) {
@@ -296,20 +296,28 @@ public class ControllerGrainGrowth implements Initializable {
         }
 
         if (model != null) {
+            int numberOfAddedGrains;
+
             if (pType == Random) {
-                if (model.fillRandomly(grainAmount)) refreshCanvas();
-                else
-                    displayAlert("Nie ma wystarczająco dużo miejsca aby dodać " + grainAmount + " dodatkowych ziaren.");
-            }
-            else if (pType == EvenlyPlacement){
-                if (model.fillEvenlyPlacement(grainAmount, distance_radius)) refreshCanvas();
-                else
+                numberOfAddedGrains = model.fillRandomly(grainAmount);
+                refreshCanvas();
+                if (numberOfAddedGrains < grainAmount)
+                    displayAlert("Nie ma wystarczająco dużo miejsca aby dodać " + grainAmount + " dodatkowych ziaren." +
+                            "\nUdało dodać się " + numberOfAddedGrains + " ziaren");
+            } else if (pType == EvenlyPlacement) {
+                numberOfAddedGrains = model.fillEvenlyPlacement(grainAmount, distance_radius);
+                refreshCanvas();
+                if (numberOfAddedGrains < grainAmount)
                     displayAlert("Nie ma wystarczająco dużo miejsca aby dodać " + grainAmount +
                             " dodatkowych ziaren, przy odległości między ziarnami równej " + distance_radius +
-                            " i rozmiarze ziaren równym " + grainHeight + "x" + grainWidth);
-            }
-            else if (pType == RandomWithRadius){
-                
+                            " i rozmiarze ziaren równym " + grainHeight + "x" + grainWidth +
+                            "\nUdało dodać się " + numberOfAddedGrains + " ziaren");
+            } else if (pType == RandomWithRadius) {
+                numberOfAddedGrains = model.fillRandomlyWithRadius(grainAmount, distance_radius);
+                refreshCanvas();
+                if (numberOfAddedGrains < grainAmount)
+                    displayAlert("Nie udało dodać się " + grainAmount + " ziaren." +
+                            "\nDodano " + numberOfAddedGrains + " ziaren.");
             }
         }
     }
@@ -331,7 +339,7 @@ public class ControllerGrainGrowth implements Initializable {
         int gridX = canvasX / height;
         int gridY = canvasY / width;
 
-        if (!(gridX > model.getGridWidth() - 1 || gridX < 0 || gridY > model.getGridHeight() - 1 || gridY < 0)){
+        if (!(gridX > model.getGridWidth() - 1 || gridX < 0 || gridY > model.getGridHeight() - 1 || gridY < 0)) {
             model.addSingleGrain(gridY, gridX);
             refreshCanvas();
         }

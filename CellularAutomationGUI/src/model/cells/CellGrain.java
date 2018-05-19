@@ -1,4 +1,5 @@
 package model.cells;
+import static model.cells.CellGrain.Availability.*;
 
 public class CellGrain extends Cell {
     public static class State {
@@ -6,10 +7,16 @@ public class CellGrain extends Cell {
         public static byte GRAIN = 1;
     }
 
+    public enum Availability {
+        AVAILABLE, UNAVAILABLE
+    }
+
     private int id;
+    private Availability availability;
 
     public CellGrain() {
         state = State.EMPTY;
+        availability = AVAILABLE;
         id = 0;
     }
 
@@ -19,5 +26,13 @@ public class CellGrain extends Cell {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Availability getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(Availability availability) {
+        this.availability = availability;
     }
 }
