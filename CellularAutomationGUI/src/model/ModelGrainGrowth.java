@@ -1,8 +1,10 @@
 package model;
 
 import java.util.*;
+
 import javafx.scene.paint.Color;
 import model.cells.CellGrain;
+
 import static model.ModelGrainGrowth.NeighborhoodType.*;
 import static model.ModelGrainGrowth.EdgeType.*;
 import static model.cells.CellGrain.State.*;
@@ -471,11 +473,11 @@ public class ModelGrainGrowth {
     public int fillEvenlyPlacement(int grainAmount, int distance) {
         reset();
         Random rand = new Random();
-        int maxOnHeight = gridHeight / distance - 1;
-        int maxOnWidth = gridWidth / distance - 1;
+        int maxOnHeight = gridHeight / (distance + 1);// - 1;
+        int maxOnWidth = gridWidth / (distance + 1);// - 1;
         int maxGrainNumber = maxOnHeight * maxOnWidth;
 
-        int x = distance - 1, y = distance - 1;
+        int x = distance, y = distance;
         int counter = 1, i = 0;
 
         for (; i < grainAmount; i++) {
@@ -487,13 +489,13 @@ public class ModelGrainGrowth {
             grid[x][y].setState(GRAIN);
             grid[x][y].setId(i + 1);
 
-            x += distance;
+            x += distance + 1;
             counter++;
 
             if (counter > maxOnHeight) {
                 counter = 1;
-                x = distance - 1;
-                y += distance;
+                x = distance;
+                y += distance + 1;
             }
         }
 

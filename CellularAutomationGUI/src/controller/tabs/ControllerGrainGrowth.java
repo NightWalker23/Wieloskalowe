@@ -165,8 +165,11 @@ public class ControllerGrainGrowth implements Initializable {
         });
         radiusField.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
-                if (!newValue.matches("\\d*"))
+                if (!newValue.matches("\\d*")) {
+//                    if (Integer.parseInt(oldValue ) < 1)
+//                        oldValue = "1";
                     radiusField.setText(oldValue);
+                }
             } catch (Exception ignored) {
             }
         });
@@ -291,6 +294,7 @@ public class ControllerGrainGrowth implements Initializable {
         }
         try {
             distance_radius = Integer.parseInt(radiusField.getText());
+            if (distance_radius < 1) distance_radius = 1;
         } catch (NumberFormatException e) {
             distance_radius = 1;
         }
