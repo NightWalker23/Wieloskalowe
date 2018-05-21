@@ -445,7 +445,7 @@ public class ModelGrainGrowth {
     public int fillRandomly(int grainAmount) {
         Random rand = new Random();
 
-        int counter = 0;
+        int counter = 0, counterBreak = 0, limitBraek = 1000;
 
         int i = 0, limiter = grainAmount;
         if (listOfGrains.size() > 0) {
@@ -464,7 +464,13 @@ public class ModelGrainGrowth {
                 counter++;
                 grid[x][y].setState(GRAIN);
                 grid[x][y].setId(i + 1);
-            } else i--;
+            } else {
+                i--;
+                counterBreak++;
+            }
+
+            if (counterBreak == limitBraek)
+                break;
         }
 
         return counter;
