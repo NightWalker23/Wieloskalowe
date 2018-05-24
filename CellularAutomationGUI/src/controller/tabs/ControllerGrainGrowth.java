@@ -2,28 +2,41 @@ package controller.tabs;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import model.Global;
 import model.ModelGrainGrowth;
+
 import static model.ModelGrainGrowth.*;
+
 import model.cells.CellGrain;
 import model.painters.PainterGrainGrowth;
+
+import javax.imageio.ImageIO;
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
 import static model.ModelGrainGrowth.NeighborhoodType.*;
 import static model.ModelGrainGrowth.EdgeType.*;
 import static model.ModelGrainGrowth.TypeOfPlacement.*;
 
 public class ControllerGrainGrowth implements Initializable {
+    @FXML
+    ScrollPane scrollPane;
     @FXML
     AnchorPane pane;
     @FXML
@@ -69,8 +82,6 @@ public class ControllerGrainGrowth implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        canvas2D.setHeight(600);
-        canvas2D.setWidth(600);
         gc = canvas2D.getGraphicsContext2D();
 
         String[] neighboursOptions = new String[]{"von Neuman", "Moore", "Pentagonal left", "Pentagonal right", "Pentagonal up", "Pentagonal down", "Pentagonal random", "Hexagonal left", "Hexagonal right", "Hexagonal random"};
@@ -166,8 +177,6 @@ public class ControllerGrainGrowth implements Initializable {
         radiusField.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
                 if (!newValue.matches("\\d*")) {
-//                    if (Integer.parseInt(oldValue ) < 1)
-//                        oldValue = "1";
                     radiusField.setText(oldValue);
                 }
             } catch (Exception ignored) {
@@ -247,7 +256,7 @@ public class ControllerGrainGrowth implements Initializable {
         }
     }
 
-    public void widthtDone(MouseEvent dragEvent) {
+    public void widthDone(MouseEvent dragEvent) {
         gridWidth = (int) canvas2D.getHeight() / grainHeight;
         if (model != null) {
             model.setGridWidth(gridWidth);
@@ -328,8 +337,10 @@ public class ControllerGrainGrowth implements Initializable {
 
     @FXML
     private void addGrainOnCanvas(MouseEvent mouseEvent) {
-        int x0 = 10, y0 = 39; //współrzędne początka canvasa w okienku
-        int x = (int) mouseEvent.getSceneX() - x0, y = (int) mouseEvent.getSceneY() - y0; //współrzędne w okienku
+        int x0 = 1, y0 = 30; //współrzędne początka canvasa w okienku
+        //współrzędne w okienku
+        int x = (int) mouseEvent.getSceneX() - x0 + ((int)scrollPane.getHvalue() + (int)scrollPane.getHvalue()/26);
+        int y = (int) mouseEvent.getSceneY() - y0 + ((int)scrollPane.getVvalue() + (int)scrollPane.getVvalue()/26);
 
         //rozmiary komórki
         int height = grainHeight;
@@ -393,5 +404,24 @@ public class ControllerGrainGrowth implements Initializable {
 
     public void resetButtons() {
         stop(new ActionEvent());
+    }
+
+    public void saveToFile(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        File file = fileChooser.showSaveDialog(Global.primaryStage);
+
+        if(file != null){
+            try {
+                WritableImage writableImage = new WritableImage((int)canvas2D.getWidth(), (int)canvas2D.getHeight());
+                canvas2D.snapshot(null, writableImage);
+                RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
+                ImageIO.write(renderedImage, "png", file);
+            } catch (IOException ex) {
+            }
+        }
     }
 }

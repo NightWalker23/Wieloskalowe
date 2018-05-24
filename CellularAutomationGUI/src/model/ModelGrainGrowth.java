@@ -60,10 +60,6 @@ public class ModelGrainGrowth {
         listOfGrains = new ArrayList<>();
     }
 
-    public void setEdgeType(EdgeType edgeType) {
-        this.edgeType = edgeType;
-    }
-
     public void setPlacementType(TypeOfPlacement placementType) {
         this.placementType = placementType;
     }
@@ -479,11 +475,11 @@ public class ModelGrainGrowth {
     public int fillEvenlyPlacement(int grainAmount, int distance) {
         reset();
         Random rand = new Random();
-        int maxOnHeight = gridHeight / (distance + 1);// - 1;
-        int maxOnWidth = gridWidth / (distance + 1);// - 1;
+        int maxOnHeight = (int) Math.ceil(gridHeight / (distance +1.0));// - 1;
+        int maxOnWidth = (int) Math.ceil(gridWidth / (distance +1.0));// - 1;
         int maxGrainNumber = maxOnHeight * maxOnWidth;
 
-        int x = distance, y = distance;
+        int x = 0, y = 0;
         int counter = 1, i = 0;
 
         for (; i < grainAmount; i++) {
@@ -500,7 +496,7 @@ public class ModelGrainGrowth {
 
             if (counter > maxOnHeight) {
                 counter = 1;
-                x = distance;
+                x = 0;
                 y += distance + 1;
             }
         }
