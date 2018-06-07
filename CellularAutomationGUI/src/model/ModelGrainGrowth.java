@@ -623,6 +623,7 @@ public class ModelGrainGrowth {
         createGrid();
     }
 
+    //zwraca mapę ID sąsiadów w stylu moora
     private void getGrainMap(CellGrain[][] frameGrid, Map<Integer, Integer> grainMap, int i, int j, int iG, int iD, int jL, int jR) {
         int grainType;
 
@@ -667,6 +668,7 @@ public class ModelGrainGrowth {
         }
     }
 
+    //ustala energię dla wszystkich komórek w siatce
     public void setGridEnergy(CellGrain[][] frameGrid) {
         for (int i = 0; i < gridHeight; i++) {
             for (int j = 0; j < gridWidth; j++) {
@@ -700,6 +702,7 @@ public class ModelGrainGrowth {
         }
     }
 
+    //wypełnia siatkę w stylu Monte Carlo
     public void fillMonteCarlo(int numberOfGrains) {
         reset();
         Random rand = new Random();
@@ -716,6 +719,7 @@ public class ModelGrainGrowth {
         setGridEnergy(grid);
     }
 
+    //oblicza energię układu dla pojedynczego ziarna
     private int calculateEnergy(Map<Integer, Integer> grainMap, int grainID) {
         int energy = 0;
 
@@ -726,6 +730,7 @@ public class ModelGrainGrowth {
         return energy;
     }
 
+    //zwraca nowe ID ziarna w taki sposób aby zmniejszyć energię układu
     private int checkEnergy(CellGrain[][] frame, int height, int width) {
         int iG, i, iD, jL, j, jR;
         i = height;
