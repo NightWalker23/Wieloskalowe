@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.canvas.*?>
 <?import java.lang.*?>
@@ -14,7 +15,7 @@
         <content>
           <AnchorPane minHeight="1000.0" minWidth="1000.0" prefHeight="1000.0" prefWidth="1000.0">
                <children>
-                    <Canvas id="canvas1D" fx:id="canvas2D" height="1000.0" onMouseClicked="#addGrainOnCanvas" width="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                    <Canvas id="canvas1D" fx:id="canvas2D" height="1000.0" layoutX="-6.0" onMouseClicked="#addGrainOnCanvas" width="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
         </content>
@@ -45,5 +46,6 @@
       <Label layoutX="619.0" layoutY="238.0" text="Type of placement" AnchorPane.rightAnchor="81.0" AnchorPane.topAnchor="185.0" />
       <Label layoutX="620.0" layoutY="337.0" text="Distance/Radius" AnchorPane.rightAnchor="94.0" AnchorPane.topAnchor="275.0" />
       <Button fx:id="buttonSaveToFile" mnemonicParsing="false" onAction="#saveToFile" prefHeight="25.0" prefWidth="170.0" text="SAVE TO FILE" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="575.0" />
+      <Button fx:id="smoothingMonteCarloButtonStart" mnemonicParsing="false" onAction="#smoothingMonteCarloButtonStart" prefHeight="25.0" prefWidth="170.0" text="Smoothing Monte Carlo" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="520.0" />
     </children>
 </AnchorPane>

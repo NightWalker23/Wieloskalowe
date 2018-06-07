@@ -9,6 +9,7 @@ import static model.ModelGrainGrowth.NeighborhoodType.*;
 import static model.ModelGrainGrowth.EdgeType.*;
 import static model.cells.CellGrain.State.*;
 import static model.cells.CellGrain.Availability.*;
+import static model.ModelGrainGrowth.TypeOfPlacement.*;
 
 public class ModelGrainGrowth {
     private CellGrain[][] grid;
@@ -17,6 +18,8 @@ public class ModelGrainGrowth {
     private EdgeType edgeType;
     private TypeOfPlacement placementType;
     private List<GrainType> listOfGrains;
+    private int numberOfEmptyGrains;
+    private int numberOfAvailableGrains;
 
     public enum EdgeType {
         Closed, Periodic
@@ -27,7 +30,7 @@ public class ModelGrainGrowth {
     }
 
     public enum TypeOfPlacement {
-        Random, EvenlyPlacement, RandomWithRadius
+        Random, EvenlyPlacement, RandomWithRadius, MonteCarlo
     }
 
     public class GrainType {
@@ -66,6 +69,8 @@ public class ModelGrainGrowth {
 
     public void createGrid() {
         grid = new CellGrain[gridHeight][gridWidth];
+        numberOfEmptyGrains = gridHeight * gridWidth;
+        numberOfAvailableGrains = gridHeight * gridWidth;
 
         for (int i = 0; i < gridHeight; i++)
             for (int j = 0; j < gridWidth; j++)
@@ -376,40 +381,6 @@ public class ModelGrainGrowth {
         return result;
     }
 
-    public CellGrain[][] getGrid() {
-        return grid;
-    }
-
-    private CellGrain[][] getTmp() {
-        CellGrain[][] tmp = new CellGrain[gridHeight][gridWidth];
-        for (int i = 0; i < gridHeight; i++)
-            for (int j = 0; j < gridWidth; j++)
-                tmp[i][j] = new CellGrain();
-
-        return tmp;
-    }
-
-    public CellGrain[][] getResult(CellGrain[][] frame) {
-        CellGrain[][] tmp = getTmp();
-
-        for (int i = 0; i < gridHeight; i++) {
-            for (int j = 0; j < gridWidth; j++) {
-                if (frame[i][j].getState() == EMPTY) {
-                    tmp[i][j].setId(checkNeighbours(frame, i, j));
-                    if (tmp[i][j].getId() != 0) tmp[i][j].setState(GRAIN);
-                } else if (frame[i][j].getState() == GRAIN) {
-                    tmp[i][j].setState(GRAIN);
-                    tmp[i][j].setId(frame[i][j].getId());
-                }
-            }
-        }
-
-        for (int i = 0; i < gridHeight; i++)
-            System.arraycopy(tmp[i], 0, grid[i], 0, gridWidth);
-
-        return getGrid();
-    }
-
     public int getGridHeight() {
         return gridHeight;
     }
@@ -418,30 +389,18 @@ public class ModelGrainGrowth {
         return gridWidth;
     }
 
-    private int getNumberOfEmptyGrains() {
-        int amount = 0;
-
-        for (int i = 0; i < gridHeight; i++)
-            for (int j = 0; j < gridWidth; j++)
-                if (grid[i][j].getState() == EMPTY) amount++;
-
-        return amount;
+    public int getNumberOfEmptyGrains() {
+        return numberOfEmptyGrains;
     }
 
-    private int getNumberOfAvailableGrains() {
-        int amount = 0;
-
-        for (int i = 0; i < gridHeight; i++)
-            for (int j = 0; j < gridWidth; j++)
-                if (grid[i][j].getAvailability() == AVAILABLE) amount++;
-
-        return amount;
+    public int getNumberOfAvailableGrains() {
+        return numberOfAvailableGrains;
     }
 
     public int fillRandomly(int grainAmount) {
         Random rand = new Random();
 
-        int counter = 0, counterBreak = 0, limitBraek = 1000;
+        int counter = 0, counterBreak = 0, limitBreak = 1000;
 
         int i = 0, limiter = grainAmount;
         if (listOfGrains.size() > 0) {
@@ -460,12 +419,13 @@ public class ModelGrainGrowth {
                 counter++;
                 grid[x][y].setState(GRAIN);
                 grid[x][y].setId(i + 1);
+                numberOfEmptyGrains--;
             } else {
                 i--;
                 counterBreak++;
             }
 
-            if (counterBreak == limitBraek)
+            if (counterBreak == limitBreak)
                 break;
         }
 
@@ -475,8 +435,8 @@ public class ModelGrainGrowth {
     public int fillEvenlyPlacement(int grainAmount, int distance) {
         reset();
         Random rand = new Random();
-        int maxOnHeight = (int) Math.ceil(gridHeight / (distance +1.0));// - 1;
-        int maxOnWidth = (int) Math.ceil(gridWidth / (distance +1.0));// - 1;
+        int maxOnHeight = (int) Math.ceil(gridHeight / (distance + 1.0));// - 1;
+        int maxOnWidth = (int) Math.ceil(gridWidth / (distance + 1.0));// - 1;
         int maxGrainNumber = maxOnHeight * maxOnWidth;
 
         int x = 0, y = 0;
@@ -490,6 +450,7 @@ public class ModelGrainGrowth {
 
             grid[x][y].setState(GRAIN);
             grid[x][y].setId(i + 1);
+            numberOfEmptyGrains--;
 
             x += distance + 1;
             counter++;
@@ -567,6 +528,8 @@ public class ModelGrainGrowth {
         for (int i = 0; i < 2 * radius + 1; i++) {
             for (int j = 0; j < 2 * radius + 1; j++) {
                 tmpCell = getRight(tmpCell.x, tmpCell.y, 1);
+                if (grid[tmpCell.x][tmpCell.y].getAvailability() == AVAILABLE)
+                    numberOfAvailableGrains--;
                 grid[tmpCell.x][tmpCell.y].setAvailability(UNAVAILABLE);
             }
             tmpCell = getLeft(tmpCell.x, tmpCell.y, 2 * radius + 1);
@@ -617,9 +580,33 @@ public class ModelGrainGrowth {
             listOfGrains.add(new GrainType(rand.nextDouble(), rand.nextDouble(), rand.nextDouble()));
             grid[x][y].setState(GRAIN);
             grid[x][y].setId(i + 1);
+            numberOfEmptyGrains--;
         } else if (grid[x][y].getState() == GRAIN) {
+
+            //usunięcie z listy ziaren właśnie usunięte ziarno
+            //o ile nie ma żadnego innego takiego ziarna
             grid[x][y].setState(EMPTY);
+            int id = grid[x][y].getId();
             grid[x][y].setId(0);
+            int idCounter = 0;
+
+            for (int i = 0; i < gridHeight; i++) {
+                for (int j = 0; j < gridWidth; j++) {
+                    if (grid[i][j].getId() == id)
+                        idCounter++;
+                }
+            }
+            if (idCounter == 0) {
+                listOfGrains.remove(id - 1);
+                for (int i = 0; i < gridHeight; i++) {
+                    for (int j = 0; j < gridWidth; j++) {
+                        if (grid[i][j].getId() > id)
+                            grid[i][j].setId(grid[i][j].getId() - 1);
+                    }
+                }
+            }
+
+            numberOfEmptyGrains++;
         }
     }
 
@@ -634,5 +621,200 @@ public class ModelGrainGrowth {
     public void reset() {
         listOfGrains = new ArrayList<>();
         createGrid();
+    }
+
+    private void getGrainMap(CellGrain[][] frameGrid, Map<Integer, Integer> grainMap, int i, int j, int iG, int iD, int jL, int jR) {
+        int grainType;
+
+        if (iG != -1 && jL != -1) {
+            grainType = frameGrid[iG][jL].getId();
+            fillMap(grainType, grainMap);
+        }
+
+        if (iG != -1) {
+            grainType = frameGrid[iG][j].getId();
+            fillMap(grainType, grainMap);
+        }
+
+        if (iG != -1 && jR != -1) {
+            grainType = frameGrid[iG][jR].getId();
+            fillMap(grainType, grainMap);
+        }
+
+        if (jL != -1) {
+            grainType = frameGrid[i][jL].getId();
+            fillMap(grainType, grainMap);
+        }
+
+        if (jR != -1) {
+            grainType = frameGrid[i][jR].getId();
+            fillMap(grainType, grainMap);
+        }
+
+        if (iD != -1 && jL != -1) {
+            grainType = frameGrid[iD][jL].getId();
+            fillMap(grainType, grainMap);
+        }
+
+        if (iD != -1) {
+            grainType = frameGrid[iD][j].getId();
+            fillMap(grainType, grainMap);
+        }
+
+        if (iD != -1 && jR != -1) {
+            grainType = frameGrid[iD][jR].getId();
+            fillMap(grainType, grainMap);
+        }
+    }
+
+    public void setGridEnergy(CellGrain[][] frameGrid) {
+        for (int i = 0; i < gridHeight; i++) {
+            for (int j = 0; j < gridWidth; j++) {
+                int iG, iD, jL, jR;
+
+                if (i == 0)
+                    if (edgeType == Closed) iG = -1;
+                    else iG = gridHeight - 1;
+                else iG = i - 1;
+
+                if (i == gridHeight - 1)
+                    if (edgeType == Closed) iD = -1;
+                    else iD = 0;
+                else iD = i + 1;
+
+                if (j == 0)
+                    if (edgeType == Closed) jL = -1;
+                    else jL = gridWidth - 1;
+                else jL = j - 1;
+
+                if (j == gridWidth - 1)
+                    if (edgeType == Closed) jR = -1;
+                    else jR = 0;
+                else jR = j + 1;
+
+                Map<Integer, Integer> grainMap = new HashMap<>();
+                getGrainMap(frameGrid, grainMap, i, j, iG, iD, jL, jR);
+
+                frameGrid[i][j].setEnergy(calculateEnergy(grainMap, grid[i][j].getId()));
+            }
+        }
+    }
+
+    public void fillMonteCarlo(int numberOfGrains) {
+        reset();
+        Random rand = new Random();
+        for (int i = 0; i < numberOfGrains; i++)
+            listOfGrains.add(new GrainType(rand.nextDouble(), rand.nextDouble(), rand.nextDouble()));
+
+        for (int i = 0; i < gridHeight; i++)
+            for (int j = 0; j < gridWidth; j++) {
+                grid[i][j].setState(GRAIN);
+                grid[i][j].setId(rand.nextInt(numberOfGrains) + 1);
+                numberOfEmptyGrains--;
+            }
+
+        setGridEnergy(grid);
+    }
+
+    private int calculateEnergy(Map<Integer, Integer> grainMap, int grainID) {
+        int energy = 0;
+
+        for (Map.Entry<Integer, Integer> entry : grainMap.entrySet())
+            if (entry.getKey() != grainID)
+                energy += entry.getValue();
+
+        return energy;
+    }
+
+    private int checkEnergy(CellGrain[][] frame, int height, int width) {
+        int iG, i, iD, jL, j, jR;
+        i = height;
+        j = width;
+
+        if (height == 0)
+            if (edgeType == Closed) iG = -1;
+            else iG = gridHeight - 1;
+        else iG = height - 1;
+
+        if (height == gridHeight - 1)
+            if (edgeType == Closed) iD = -1;
+            else iD = 0;
+        else iD = height + 1;
+
+        if (width == 0)
+            if (edgeType == Closed) jL = -1;
+            else jL = gridWidth - 1;
+        else jL = width - 1;
+
+        if (width == gridWidth - 1)
+            if (edgeType == Closed) jR = -1;
+            else jR = 0;
+        else jR = width + 1;
+
+
+        Map<Integer, Integer> grainMap = new HashMap<>();
+        getGrainMap(frame, grainMap, i, j, iG, iD, jL, jR);
+
+        int energyBefore = calculateEnergy(grainMap, frame[i][j].getId());
+        Random rand = new Random();
+        int newID = rand.nextInt(listOfGrains.size()) + 1;
+
+        while (calculateEnergy(grainMap, newID) > energyBefore)
+            newID = rand.nextInt(listOfGrains.size()) + 1;
+
+        return newID;
+    }
+
+    public CellGrain[][] getGrid() {
+        return grid;
+    }
+
+    private CellGrain[][] getTmp() {
+        CellGrain[][] tmp = new CellGrain[gridHeight][gridWidth];
+        for (int i = 0; i < gridHeight; i++)
+            for (int j = 0; j < gridWidth; j++)
+                tmp[i][j] = new CellGrain();
+
+        return tmp;
+    }
+
+    public CellGrain[][] getResult(CellGrain[][] frame) {
+        CellGrain[][] tmp = getTmp();
+
+        if (placementType != MonteCarlo) {
+            for (int i = 0; i < gridHeight; i++) {
+                for (int j = 0; j < gridWidth; j++) {
+                    if (frame[i][j].getState() == EMPTY) {
+                        tmp[i][j].setId(checkNeighbours(frame, i, j));
+                        if (tmp[i][j].getId() != 0) {
+                            tmp[i][j].setState(GRAIN);
+                            numberOfEmptyGrains--;
+                        }
+                    } else if (frame[i][j].getState() == GRAIN) {
+                        tmp[i][j].setState(GRAIN);
+                        tmp[i][j].setId(frame[i][j].getId());
+                    }
+                }
+            }
+        } else if (placementType == MonteCarlo) {
+            setGridEnergy(frame);
+            for (int i = 0; i < gridHeight; i++) {
+                for (int j = 0; j < gridWidth; j++) {
+                    if (frame[i][j].getEnergy() != 0) {
+                        tmp[i][j].setId(checkEnergy(frame, i, j));
+                        tmp[i][j].setState(GRAIN);
+                    } else {
+                        tmp[i][j].setState(GRAIN);
+                        tmp[i][j].setId(frame[i][j].getId());
+                        tmp[i][j].setEnergy(tmp[i][j].getEnergy());
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < gridHeight; i++)
+            System.arraycopy(tmp[i], 0, grid[i], 0, gridWidth);
+
+        return getGrid();
     }
 }

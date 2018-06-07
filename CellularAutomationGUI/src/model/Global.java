@@ -8,4 +8,5 @@ public class Global {
     public static int grainHeight = 1;
     public static int grainWidth = 1;
     public static Stage primaryStage;
+    public static ModelGrainGrowth.TypeOfPlacement placementType;
 }

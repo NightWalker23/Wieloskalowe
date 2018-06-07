@@ -14,10 +14,21 @@ public class CellGrain extends Cell {
     private int id;
     private Availability availability;
 
+    public int getEnergy() {
+        return energy;
+    }
+
+    public void setEnergy(int energy) {
+        this.energy = energy;
+    }
+
+    private int energy;
+
     public CellGrain() {
         state = State.EMPTY;
         availability = AVAILABLE;
         id = 0;
+        energy = 0;
     }
 
     public int getId() {

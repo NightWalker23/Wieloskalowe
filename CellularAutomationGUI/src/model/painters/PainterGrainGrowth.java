@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 import model.Global;
 import model.ModelGrainGrowth;
 import model.cells.CellGrain;
+import static model.ModelGrainGrowth.TypeOfPlacement.*;
 
 import java.util.concurrent.TimeUnit;
 
@@ -38,13 +39,7 @@ public class PainterGrainGrowth implements Runnable {
     }
 
     private int getNumberOfEmptyGrains(CellGrain[][] tab) {
-        int amount = 0;
-
-        for (int i = 0; i < model.getGridHeight(); i++)
-            for (int j = 0; j < model.getGridWidth(); j++)
-                if (tab[i][j].getState() == State.EMPTY) amount++;
-
-        return amount;
+        return model.getNumberOfEmptyGrains();
     }
 
     private void paint() {
@@ -54,9 +49,10 @@ public class PainterGrainGrowth implements Runnable {
             Platform.runLater(() -> {
                 CellGrain[][] tab = model.getResult(model.getGrid());
 
-                if (getNumberOfEmptyGrains(tab) == 0) {
+                if (getNumberOfEmptyGrains(tab) == 0 && Global.placementType != MonteCarlo) {
                     stop();
                     cgg.resetButtons();
+                    model.setGridEnergy(model.getGrid());
                 }
                 cleanCanvas();
 
